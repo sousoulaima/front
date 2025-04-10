@@ -1,36 +1,98 @@
 import { INavData } from '@coreui/angular';
 
 export const navItems: INavData[] = [
+
   {
-    name: 'Dashboard',
-    url: '/dashboard',
+    name: 'Tableau de bord',
     iconComponent: { name: 'cil-speedometer' },
-    badge: {
-      color: 'info',
-      text: 'NEW'
-    }
+   
   },
+  
+
   {
-    title: true,
-    name: 'Theme'
+    name: 'gestion des utilisateur',
+    url: '/gestion-utilisateurs',
+    iconComponent: { name: 'cil-user' },
+   
   },
+ 
   {
-    name: 'Colors',
-    url: '/theme/colors',
-    iconComponent: { name: 'cil-drop' }
-  },
+    name: 'parametrage',
+    url: '/paramétrages',
+    iconComponent: { name: 'cil-settings' } , children: [
+      {
+        name: 'Module de reglement',
+        url: '/paramétrages/moduleReglement',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Categorie Abonnement',
+        url: '/paramétrages/categorieabonnement',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Type Abonnement',
+        url: '/paramétrages/typeAbonnement',
+        icon: 'nav-icon-bullet'
+      }]  
+    },////////////////////////
+
+
+
   {
-    name: 'Typography',
-    url: '/theme/typography',
-    linkProps: { fragment: 'headings' },
-    iconComponent: { name: 'cil-pencil' }
-  },
+    name: 'Abonnement',
+    url: '/Abonnement',
+   
+    iconComponent: { name: 'cil-user' }
+    , children: [
+      {
+        name: 'Adherent',
+        url: '/abonnement/adherent',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Liste des Abonnement',
+        url: '/abonnement/listeAbonnement',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Ajouter Abonnement',
+        url: '/abonnement/ajoutAbonnement',
+        icon: 'nav-icon-bullet'
+      }]  },
+      ////////////////////////
+      {
+
+        name: 'salle de formation',
+        url: '/salle-formation',
+        iconComponent: { name: 'cil-pencil' }
+        , children: [
+          {
+            name: 'liste des salle ',
+            url: '/salle-formation/listedesSalle',
+            icon: 'nav-icon-bullet'
+          },
+          {
+            name: 'Formateur',
+            url: '/salle-formation/formateur',
+            icon: 'nav-icon-bullet'
+          },
+          {
+            name: 'Réservation',
+            url: '/salle-formation/reservation',
+            icon: 'nav-icon-bullet'
+          }]  },
+
+
+
+      
+  
   {
     name: 'Components',
     title: true
   },
   {
-    name: 'Base',
+    name: 'aaaaaaaaaaaaaaaaa',
     url: '/base',
     iconComponent: { name: 'cil-puzzle' },
     children: [

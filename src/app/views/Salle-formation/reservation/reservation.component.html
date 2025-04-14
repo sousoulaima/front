@@ -1,0 +1,255 @@
+<div class="gestion-reservations-container">
+    <div class="gestion-reservations">
+      <!-- Modal for Adding/Editing a Reservation -->
+      <div class="modal" *ngIf="showModal" @modalAnimation>
+        <div class="modal-content">
+          <h2 class="modal-title">{{ isEditing ? 'Éditer la réservation' : 'Ajouter une réservation' }}</h2>
+          <form (ngSubmit)="saveReservation()" #reservationForm="ngForm">
+            <div class="form-group">
+              <label>Date <span class="required">*</span></label>
+              <input
+                type="date"
+                [(ngModel)]="currentReservation.date"
+                name="date"
+                #date="ngModel"
+                required
+                class="form-input"
+                [min]="today"
+                [ngClass]="{'invalid': date.invalid && (date.dirty || date.touched)}"
+              />
+              <span class="error" *ngIf="date.invalid && (date.dirty || date.touched)">
+                La date est requise et doit être aujourd'hui ou ultérieure.
+              </span>
+            </div>
+            <div class="form-group">
+              <label>Horaire <span class="required">*</span></label>
+              <input
+                type="text"
+                [(ngModel)]="currentReservation.horaire"
+                name="horaire"
+                #horaire="ngModel"
+                required
+                pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9] - ([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
+                placeholder="ex: 10:00 - 11:30"
+                class="form-input"
+                [ngClass]="{'invalid': horaire.invalid && (horaire.dirty || horaire.touched)}"
+              />
+              <span class="error" *ngIf="horaire.invalid && (horaire.dirty || horaire.touched)">
+                L'horaire doit être au format HH:MM - HH:MM.
+              </span>
+            </div>
+            <div class="form-group">
+              <label>Salle <span class="required">*</span></label>
+              <select
+                [(ngModel)]="currentReservation.salleCode"
+                name="salleCode"
+                #salleCode="ngModel"
+                required
+                class="form-input"
+                (change)="updateMontant()"
+                [ngClass]="{'invalid': salleCode.invalid && (salleCode.dirty || salleCode.touched)}"
+              >
+                <option value="" disabled>Sélectionner une salle</option>
+                <option *ngFor="let salle of salles" [value]="salle.code">{{ salle.designation }} ({{ salle.capacite }})</option>
+              </select>
+              <span class="error" *ngIf="salleCode.invalid && (salleCode.dirty || salleCode.touched)">
+                La salle est requise.
+              </span>
+            </div>
+            <div class="form-group">
+              <label>Formateur <span class="required">*</span></label>
+              <select
+                [(ngModel)]="currentReservation.formateurCode"
+                name="formateurCode"
+                #formateurCode="ngModel"
+                required
+                class="form-input"
+                [ngClass]="{'invalid': formateurCode.invalid && (formateurCode.dirty || formateurCode.touched)}"
+              >
+                <option value="" disabled>Sélectionner un formateur</option>
+                <option *ngFor="let formateur of formateurs" [value]="formateur.code">{{ formateur.nom }} {{ formateur.prenom }}</option>
+              </select>
+              <span class="error" *ngIf="formateurCode.invalid && (formateurCode.dirty || formateurCode.touched)">
+                Le formateur est requis.
+              </span>
+            </div>
+            <div class="form-group">
+              <label>Montant (DT) <span class="required">*</span></label>
+              <input
+                type="number"
+                [(ngModel)]="currentReservation.montant"
+                name="montant"
+                #montant="ngModel"
+                required
+                min="0"
+                step="0.01"
+                class="form-input"
+                [ngClass]="{'invalid': montant.invalid && (montant.dirty || montant.touched)}"
+              />
+              <span class="error" *ngIf="montant.invalid && (montant.dirty || montant.touched)">
+                Le montant doit être ≥ 0.
+              </span>
+            </div>
+            <div class="form-group">
+              <label>Participants <span class="required">*</span></label>
+              <input
+                type="text"
+                [(ngModel)]="currentReservation.participants"
+                name="participants"
+                #participants="ngModel"
+                required
+                pattern="^[0-9]+/[0-9]+$"
+                placeholder="ex: 15/20"
+                class="form-input"
+                [ngClass]="{'invalid': participants.invalid && (participants.dirty || participants.touched)}"
+              />
+              <span class="error" *ngIf="participants.invalid && (participants.dirty || participants.touched)">
+                Les participants doivent être au format X/Y (ex: 15/20).
+              </span>
+            </div>
+            <div class="form-group">
+              <label>Statut <span class="required">*</span></label>
+              <select
+                [(ngModel)]="currentReservation.statut"
+                name="statut"
+                #statut="ngModel"
+                required
+                class="form-input"
+                [ngClass]="{'invalid': statut.invalid && (statut.dirty || statut.touched)}"
+              >
+                <option value="" disabled>Sélectionner un statut</option>
+                <option value="À venir">À venir</option>
+                <option value="Terminée">Terminée</option>
+              </select>
+              <span class="error" *ngIf="statut.invalid && (statut.dirty || statut.touched)">
+                Le statut est requis.
+              </span>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="cancel-btn" (click)="closeModal()">Annuler</button>
+              <button type="submit" class="save-btn" [disabled]="!reservationForm.valid">Sauvegarder</button>
+            </div>
+          </form>
+        </div>
+      </div>
+  
+      <!-- Modal for Viewing a Reservation -->
+      <div class="modal" *ngIf="showViewModal" @modalAnimation>
+        <div class="modal-content">
+          <h2 class="modal-title">Détails de la réservation</h2>
+          <div class="user-details">
+            <p><strong>ID :</strong> {{ viewedReservation?.id }}</p>
+            <p><strong>Date :</strong> {{ viewedReservation?.date }}</p>
+            <p><strong>Horaire :</strong> {{ viewedReservation?.horaire }}</p>
+            <p><strong>Salle :</strong> {{ getSalleDesignation(viewedReservation?.salleCode) }}</p>
+            <p><strong>Formateur :</strong> {{ getFormateurName(viewedReservation?.formateurCode) }}</p>
+            <p><strong>Montant :</strong> {{ viewedReservation?.montant }} DT</p>
+            <p><strong>Participants :</strong> {{ viewedReservation?.participants }}</p>
+            <p><strong>Statut :</strong> <span [ngClass]="getStatutClass(viewedReservation?.statut)">{{ viewedReservation?.statut }}</span></p>
+          </div>
+          <div class="modal-actions">
+            <button class="close-btn" (click)="closeViewModal()">Fermer</button>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Modal for Delete Confirmation -->
+      <div class="modal" *ngIf="showDeleteConfirm" @modalAnimation>
+        <div class="modal-content">
+          <h2 class="modal-title">Confirmer la suppression</h2>
+          <p class="modal-text">Êtes-vous sûr de vouloir supprimer la réservation {{ reservationToDelete?.id }} ?</p>
+          <div class="modal-actions">
+            <button class="cancel-btn" (click)="cancelDelete()">Annuler</button>
+            <button class="delete-btn" (click)="deleteReservation()">Supprimer</button>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Header Section -->
+      <div class="header">
+        <div class="header-title">
+          <h1 class="text-blue-800 animate-fade-in">Gestion des Réservations</h1>
+          <p class="text-gray-600 animate-fade-in">Liste des réservations de salles ({{ filteredReservations.length }} réservations)</p>
+        </div>
+        <div class="actions">
+          <button class="add-btn" (click)="openAddReservationModal()">+ Ajouter une réservation</button>
+        </div>
+      </div>
+  
+      <!-- Search and Filter Section -->
+      <div class="search-filter">
+        <div class="search">
+          <input
+            type="text"
+            placeholder="Rechercher une réservation..."
+            [(ngModel)]="searchQuery"
+            (input)="filterReservations()"
+            class="search-input"
+          />
+          <span class="search-icon">🔍</span>
+        </div>
+        <div class="filter-container">
+          <button class="filter-btn" (click)="toggleFilter()">Filtrer ▼</button>
+          <div class="filter-dropdown" *ngIf="showFilter" [@filterAnimation]>
+            <label class="filter-label">
+              Salle :
+              <select [(ngModel)]="filterSalleCode" (change)="filterReservations()" class="filter-select">
+                <option value="">Toutes</option>
+                <option *ngFor="let salle of salles" [value]="salle.code">{{ salle.designation }}</option>
+              </select>
+            </label>
+            <label class="filter-label">
+              Statut :
+              <select [(ngModel)]="filterStatut" (change)="filterReservations()" class="filter-select">
+                <option value="">Tous</option>
+                <option value="À venir">À venir</option>
+                <option value="Terminée">Terminée</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Reservations Table -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Date</th>
+              <th>Horaire</th>
+              <th>Salle</th>
+              <th>Formateur</th>
+              <th>Montant</th>
+              <th>Participants</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let reservation of filteredReservations; let i = index"
+              class="animate-slide-in-right"
+              [ngClass]="'animation-delay-' + (i * 100)"
+            >
+              <td>{{ reservation.id }}</td>
+              <td>{{ reservation.date }}</td>
+              <td>{{ reservation.horaire }}</td>
+              <td>{{ getSalleDesignation(reservation.salleCode) }}</td>
+              <td>{{ getFormateurName(reservation.formateurCode) }}</td>
+              <td>{{ reservation.montant }} DT</td>
+              <td>{{ reservation.participants }}</td>
+              <td>
+                <span class="statut" [ngClass]="getStatutClass(reservation.statut)">{{ reservation.statut }}</span>
+              </td>
+              <td class="actions">
+                <button class="action-btn view" (click)="viewReservation(reservation)" title="Voir">👁️</button>
+                <button class="action-btn edit" (click)="openEditReservationModal(reservation)" title="Éditer">✏️</button>
+                <button class="action-btn delete" (click)="confirmDeleteReservation(reservation)" title="Supprimer">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

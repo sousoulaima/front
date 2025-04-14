@@ -1,148 +1,231 @@
-import { DOCUMENT, NgStyle } from '@angular/common';
-import { Component, DestroyRef, effect, inject, OnInit, Renderer2, signal, WritableSignal } from '@angular/core';
+import { DOCUMENT, CommonModule, NgIf } from '@angular/common';
+import { AfterViewInit, Component, DestroyRef, ElementRef, ViewChild, effect, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ChartOptions } from 'chart.js';
-import {
-  AvatarComponent,
-  ButtonDirective,
-  ButtonGroupComponent,
-  CardBodyComponent,
-  CardComponent,
-  CardFooterComponent,
-  CardHeaderComponent,
-  ColComponent,
-  FormCheckLabelDirective,
-  GutterDirective,
-  ProgressBarDirective,
-  ProgressComponent,
-  RowComponent,
-  TableDirective,
-  TextColorDirective
-} from '@coreui/angular';
-import { ChartjsComponent } from '@coreui/angular-chartjs';
-import { IconDirective } from '@coreui/icons-angular';
-
-import { WidgetsBrandComponent } from '../widgets/widgets-brand/widgets-brand.component';
-import { WidgetsDropdownComponent } from '../widgets/widgets-dropdown/widgets-dropdown.component';
+import { Chart, ChartOptions, registerables } from 'chart.js';
 import { DashboardChartsData, IChartProps } from './dashboard-charts-data';
 
-interface IUser {
+// Register all Chart.js elements
+Chart.register(...registerables);
+
+interface ISpace {
   name: string;
-  state: string;
-  registered: string;
-  country: string;
-  usage: number;
-  period: string;
-  payment: string;
-  activity: string;
-  avatar: string;
+  type: string;
   status: string;
-  color: string;
+  revenue: number;
+}
+
+interface IClient {
+  name: string;
+  email: string;
+  avatarColor: string;
+  initials: string;
+  hasCustomIcon?: boolean;
 }
 
 @Component({
-    templateUrl: 'dashboard.component.html',
-    styleUrls: ['dashboard.component.scss'],
-    imports: [WidgetsDropdownComponent, TextColorDirective, CardComponent, CardBodyComponent, RowComponent, ColComponent, ButtonDirective, IconDirective, ReactiveFormsModule, ButtonGroupComponent, FormCheckLabelDirective, ChartjsComponent, NgStyle, CardFooterComponent, GutterDirective, ProgressBarDirective, ProgressComponent, WidgetsBrandComponent, CardHeaderComponent, TableDirective, AvatarComponent]
+  selector: 'app-dashboard',
+  standalone: true,
+  imports: [ReactiveFormsModule, CommonModule, NgIf],
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss'],
 })
-export class DashboardComponent implements OnInit {
-
+export class DashboardComponent implements OnInit, AfterViewInit {
   readonly #destroyRef: DestroyRef = inject(DestroyRef);
   readonly #document: Document = inject(DOCUMENT);
-  readonly #renderer: Renderer2 = inject(Renderer2);
   readonly #chartsData: DashboardChartsData = inject(DashboardChartsData);
 
-  public users: IUser[] = [
-    {
-      name: 'Yiorgos Avraamu',
-      state: 'New',
-      registered: 'Jan 1, 2021',
-      country: 'Us',
-      usage: 50,
-      period: 'Jun 11, 2021 - Jul 10, 2021',
-      payment: 'Mastercard',
-      activity: '10 sec ago',
-      avatar: './assets/images/avatars/1.jpg',
-      status: 'success',
-      color: 'success'
+  // Reference to the Chart.js canvas
+  @ViewChild('visitorChart') visitorChart!: ElementRef<HTMLCanvasElement>;
+
+  // Total revenue
+  public totalRevenue: number = 8249210;
+
+  // Space metrics
+  public coworkingOccupancy: number = 37;
+  public coworkingTotal: number = 40;
+  public sharedSpaceOccupancy: number = 32;
+  public sharedSpaceTotal: number = 38;
+  public virtualOfficeOccupancy: number = 120;
+  public virtualOfficeTotal: number = 120;
+  public privateOfficeOccupancy: number = 6;
+  public privateOfficeTotal: number = 18;
+
+  // Selected period for visitor statistics
+  public selectedPeriod: string = '1S';
+
+  // Visitor chart data for different periods
+  public visitorChartDataMap: { [key: string]: any } = {
+    '1J': {
+      labels: ['00h', '04h', '08h', '12h', '16h', '20h'],
+      datasets: [
+        {
+          label: "Aujourd'hui",
+          data: [50, 80, 120, 200, 150, 100],
+          borderColor: '#9CA3AF',
+          backgroundColor: 'rgba(156, 163, 175, 0.2)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#9CA3AF',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#9CA3AF',
+        },
+        {
+          label: 'Hier',
+          data: [60, 90, 110, 180, 140, 90],
+          borderColor: '#1E3A8A',
+          backgroundColor: 'rgba(30, 58, 138, 0.2)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#1E3A8A',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#1E3A8A',
+        },
+      ],
     },
-    {
-      name: 'Avram Tarasios',
-      state: 'Recurring ',
-      registered: 'Jan 1, 2021',
-      country: 'Br',
-      usage: 10,
-      period: 'Jun 11, 2021 - Jul 10, 2021',
-      payment: 'Visa',
-      activity: '5 minutes ago',
-      avatar: './assets/images/avatars/2.jpg',
-      status: 'danger',
-      color: 'info'
+    '1S': {
+      labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+      datasets: [
+        {
+          label: 'Cette semaine',
+          data: [80, 200, 400, 300, 600, 100, 50],
+          borderColor: '#9CA3AF',
+          backgroundColor: 'rgba(156, 163, 175, 0.2)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#9CA3AF',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#9CA3AF',
+        },
+        {
+          label: 'Semaine dernière',
+          data: [90, 150, 300, 350, 500, 120, 80],
+          borderColor: '#1E3A8A',
+          backgroundColor: 'rgba(30, 58, 138, 0.2)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#1E3A8A',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#1E3A8A',
+        },
+      ],
     },
-    {
-      name: 'Quintin Ed',
-      state: 'New',
-      registered: 'Jan 1, 2021',
-      country: 'In',
-      usage: 74,
-      period: 'Jun 11, 2021 - Jul 10, 2021',
-      payment: 'Stripe',
-      activity: '1 hour ago',
-      avatar: './assets/images/avatars/3.jpg',
-      status: 'warning',
-      color: 'warning'
+    '1M': {
+      labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+      datasets: [
+        {
+          label: 'Ce mois',
+          data: [1200, 1800, 1500, 2000],
+          borderColor: '#9CA3AF',
+          backgroundColor: 'rgba(156, 163, 175, 0.2)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#9CA3AF',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#9CA3AF',
+        },
+        {
+          label: 'Mois dernier',
+          data: [1000, 1600, 1400, 1800],
+          borderColor: '#1E3A8A',
+          backgroundColor: 'rgba(30, 58, 138, 0.2)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#1E3A8A',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#1E3A8A',
+        },
+      ],
     },
-    {
-      name: 'Enéas Kwadwo',
-      state: 'Sleep',
-      registered: 'Jan 1, 2021',
-      country: 'Fr',
-      usage: 98,
-      period: 'Jun 11, 2021 - Jul 10, 2021',
-      payment: 'Paypal',
-      activity: 'Last month',
-      avatar: './assets/images/avatars/4.jpg',
-      status: 'secondary',
-      color: 'danger'
+    '1A': {
+      labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
+      datasets: [
+        {
+          label: 'Cette année',
+          data: [5000, 6000, 5500, 7000, 6500, 8000, 7500, 7200, 6800, 7100, 6900, 7300],
+          borderColor: '#9CA3AF',
+          backgroundColor: 'rgba(156, 163, 175, 0.2)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#9CA3AF',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#9CA3AF',
+        },
+        {
+          label: 'Année dernière',
+          data: [4800, 5800, 5300, 6700, 6200, 7800, 7300, 7000, 6600, 6900, 6700, 7100],
+          borderColor: '#1E3A8A',
+          backgroundColor: 'rgba(30, 58, 138, 0.2)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#1E3A8A',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#1E3A8A',
+        },
+      ],
     },
-    {
-      name: 'Agapetus Tadeáš',
-      state: 'New',
-      registered: 'Jan 1, 2021',
-      country: 'Es',
-      usage: 22,
-      period: 'Jun 11, 2021 - Jul 10, 2021',
-      payment: 'ApplePay',
-      activity: 'Last week',
-      avatar: './assets/images/avatars/5.jpg',
-      status: 'success',
-      color: 'primary'
+  };
+
+  public visitorChartOptions: ChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top', labels: { font: { size: 12 }, color: '#1E3A8A' } },
+      tooltip: { backgroundColor: '#1E3A8A', titleColor: '#fff', bodyColor: '#fff' },
     },
-    {
-      name: 'Friderik Dávid',
-      state: 'New',
-      registered: 'Jan 1, 2021',
-      country: 'Pl',
-      usage: 43,
-      period: 'Jun 11, 2021 - Jul 10, 2021',
-      payment: 'Amex',
-      activity: 'Yesterday',
-      avatar: './assets/images/avatars/6.jpg',
-      status: 'info',
-      color: 'dark'
-    }
+    scales: {
+      x: { ticks: { color: '#1E3A8A' } },
+      y: { beginAtZero: true, ticks: { color: '#1E3A8A', stepSize: 200 } },
+    },
+    animation: {
+      duration: 2000,
+      easing: 'easeOutQuart',
+    },
+  };
+
+  // Chart instance
+  private chartInstance: Chart | null = null;
+
+  // Spaces (activities)
+  public spaces: ISpace[] = [
+    { name: 'Espace Impla', type: 'Bureau privé', status: 'Occupé', revenue: 28000 },
+    { name: 'Espace Ter-ter', type: 'Bureau virtuel', status: 'Disponible', revenue: 11080 },
+    { name: 'Espace Skyulah', type: 'Coworking', status: 'Occupé', revenue: 12090 },
   ];
 
-  public mainChart: IChartProps = { type: 'line' };
-  public mainChartRef: WritableSignal<any> = signal(undefined);
-  #mainChartRefEffect = effect(() => {
-    if (this.mainChartRef()) {
+  // Clients with custom icon for Iman Thao
+  public clients: IClient[] = [
+    { name: 'Iman Thao', email: 'iman.thao@example.com', avatarColor: 'bg-teal-500', initials: 'IT', hasCustomIcon: true },
+    { name: 'Dina Saoudi', email: 'dina.saoudi@example.com', avatarColor: 'bg-yellow-500', initials: 'DS' },
+    { name: 'Nadia Chemsi', email: 'nadia.chemsi@example.com', avatarColor: 'bg-purple-500', initials: 'NC' },
+  ];
+
+  // User profile
+  public user = {
+    name: 'Yassine Hnace',
+    role: 'Gérant S.H_Coworking',
+    initials: 'YH',
+    avatarColor: 'bg-indigo-500',
+  };
+
+  // Chart signals
+  public occupancyChart: IChartProps = { type: 'line' };
+  public occupancyChartRef: WritableSignal<any> = signal(undefined);
+
+  #occupancyChartRefEffect = effect(() => {
+    if (this.occupancyChartRef()) {
       this.setChartStyles();
     }
   });
-  public chart: Array<IChartProps> = [];
+
   public trafficRadioGroup = new FormGroup({
-    trafficRadio: new FormControl('Month')
+    trafficRadio: new FormControl('Week'),
   });
 
   ngOnInit(): void {
@@ -150,8 +233,35 @@ export class DashboardComponent implements OnInit {
     this.updateChartOnColorModeChange();
   }
 
+  ngAfterViewInit(): void {
+    this.updateVisitorChart();
+  }
+
   initCharts(): void {
-    this.mainChart = this.#chartsData.mainChart;
+    this.occupancyChart = this.#chartsData.mainChart;
+  }
+
+  setVisitorPeriod(period: string): void {
+    this.selectedPeriod = period;
+    this.updateVisitorChart();
+  }
+
+  updateVisitorChart(): void {
+    if (this.visitorChart) {
+      const ctx = this.visitorChart.nativeElement.getContext('2d');
+      if (ctx) {
+        // Destroy previous chart instance if it exists
+        if (this.chartInstance) {
+          this.chartInstance.destroy();
+        }
+        // Create new chart instance
+        this.chartInstance = new Chart(ctx, {
+          type: 'line',
+          data: this.visitorChartDataMap[this.selectedPeriod],
+          options: this.visitorChartOptions,
+        });
+      }
+    }
   }
 
   setTrafficPeriod(value: string): void {
@@ -162,27 +272,29 @@ export class DashboardComponent implements OnInit {
 
   handleChartRef($chartRef: any) {
     if ($chartRef) {
-      this.mainChartRef.set($chartRef);
+      this.occupancyChartRef.set($chartRef);
     }
   }
 
   updateChartOnColorModeChange() {
-    const unListen = this.#renderer.listen(this.#document.documentElement, 'ColorSchemeChange', () => {
+    const handler = () => {
       this.setChartStyles();
-    });
+    };
+
+    this.#document.addEventListener('ColorSchemeChange', handler);
 
     this.#destroyRef.onDestroy(() => {
-      unListen();
+      this.#document.removeEventListener('ColorSchemeChange', handler);
     });
   }
 
   setChartStyles() {
-    if (this.mainChartRef()) {
+    if (this.occupancyChartRef()) {
       setTimeout(() => {
-        const options: ChartOptions = { ...this.mainChart.options };
+        const options: ChartOptions = { ...this.occupancyChart.options };
         const scales = this.#chartsData.getScales();
-        this.mainChartRef().options.scales = { ...options.scales, ...scales };
-        this.mainChartRef().update();
+        this.occupancyChartRef().options.scales = { ...options.scales, ...scales };
+        this.occupancyChartRef().update();
       });
     }
   }

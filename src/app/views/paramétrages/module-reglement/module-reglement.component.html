@@ -1,0 +1,199 @@
+<div class="gestion-reglements-container">
+  <div class="gestion-reglements">
+    <!-- Modal for Adding/Editing a Payment -->
+    <div class="modal" *ngIf="showModal" @modalAnimation>
+      <div class="modal-content">
+        <h2 class="modal-title">{{ isEditing ? 'Éditer le paiement' : 'Ajouter un paiement' }}</h2>
+        <form (ngSubmit)="savePayment()" #paymentForm="ngForm">
+          <div class="form-group">
+            <label>Date</label>
+            <input
+              type="date"
+              [(ngModel)]="currentPayment.date"
+              name="date"
+              required
+              #date="ngModel"
+              class="form-input"
+            />
+            <span class="error" *ngIf="date.invalid && date.touched">La date est requise</span>
+          </div>
+          <div class="form-group">
+            <label>Mode de paiement</label>
+            <select
+              [(ngModel)]="currentPayment.mode"
+              name="mode"
+              required
+              #mode="ngModel"
+              class="form-input"
+            >
+              <option value="Carte bancaire">Carte bancaire</option>
+              <option value="Virement">Virement</option>
+              <option value="Espèces">Espèces</option>
+              <option value="Chèque">Chèque</option>
+            </select>
+            <span class="error" *ngIf="mode.invalid && mode.touched">Le mode est requis</span>
+          </div>
+          <div class="form-group">
+            <label>Montant (DT)</label>
+            <input
+              type="number"
+              [(ngModel)]="currentPayment.amount"
+              name="amount"
+              required
+              min="0"
+              step="0.01"
+              #amount="ngModel"
+              class="form-input"
+            />
+            <span class="error" *ngIf="amount.invalid && amount.touched">Un montant valide est requis</span>
+          </div>
+          <div class="form-group">
+            <label>Statut</label>
+            <select
+              [(ngModel)]="currentPayment.status"
+              name="status"
+              required
+              #status="ngModel"
+              class="form-input"
+            >
+              <option value="Réussi">Réussi</option>
+              <option value="En cours">En cours</option>
+              <option value="Echoué">Echoué</option>
+              <option value="En attente">En attente</option>
+            </select>
+            <span class="error" *ngIf="status.invalid && status.touched">Le statut est requis</span>
+          </div>
+          <div class="form-group">
+            <label>Commentaire</label>
+            <textarea
+              [(ngModel)]="currentPayment.comment"
+              name="comment"
+              class="form-input"
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="cancel-btn" (click)="closeModal()">Annuler</button>
+            <button type="submit" class="save-btn" [disabled]="!paymentForm.valid">Sauvegarder</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal for Viewing a Payment -->
+    <div class="modal" *ngIf="showViewModal" @modalAnimation>
+      <div class="modal-content">
+        <h2 class="modal-title">Détails du paiement</h2>
+        <div class="user-details">
+          <p><strong>Code :</strong> {{ viewedPayment?.code }}</p>
+          <p><strong>Date :</strong> {{ viewedPayment?.date }}</p>
+          <p><strong>Mode :</strong> {{ viewedPayment?.mode }}</p>
+          <p><strong>Montant :</strong> {{ viewedPayment?.amount }} DT</p>
+          <p><strong>Statut :</strong> <span [ngClass]="getStatusClass(viewedPayment?.status)">{{ viewedPayment?.status }}</span></p>
+          <p><strong>Commentaire :</strong> {{ viewedPayment?.comment || 'Aucun' }}</p>
+        </div>
+        <div class="modal-actions">
+          <button class="close-btn" (click)="closeViewModal()">Fermer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Delete Confirmation -->
+    <div class="modal" *ngIf="showDeleteConfirm" @modalAnimation>
+      <div class="modal-content">
+        <h2 class="modal-title">Confirmer la suppression</h2>
+        <p class="modal-text">Êtes-vous sûr de vouloir supprimer le paiement {{ paymentToDelete?.code }} ?</p>
+        <div class="modal-actions">
+          <button class="cancel-btn" (click)="cancelDelete()">Annuler</button>
+          <button class="delete-btn" (click)="deletePayment()">Supprimer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header Section -->
+    <div class="header">
+      <div class="header-title">
+        <h1 class="text-blue-800 animate-fade-in">Module de Règlement</h1>
+        <p class="text-gray-600 animate-fade-in">Gestion des paiements et transactions ({{ filteredPayments.length }} paiements)</p>
+      </div>
+      <button class="add-btn bg-blue-600 hover:bg-blue-700 text-white" (click)="openAddPaymentModal()">+ Ajouter un paiement</button>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="search-filter">
+      <div class="search">
+        <input
+          type="text"
+          placeholder="Rechercher un paiement..."
+          [(ngModel)]="searchQuery"
+          (input)="filterPayments()"
+          class="search-input"
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+      <div class="filter-container">
+        <button class="filter-btn" (click)="toggleFilter()">Filtrer ▼</button>
+        <div class="filter-dropdown" *ngIf="showFilter">
+          <label class="filter-label">
+            Mode :
+            <select [(ngModel)]="filterMode" (change)="filterPayments()" class="filter-select">
+              <option value="">Tous</option>
+              <option value="Carte bancaire">Carte bancaire</option>
+              <option value="Virement">Virement</option>
+              <option value="Espèces">Espèces</option>
+              <option value="Chèque">Chèque</option>
+            </select>
+          </label>
+          <label class="filter-label">
+            Statut :
+            <select [(ngModel)]="filterStatus" (change)="filterPayments()" class="filter-select">
+              <option value="">Tous</option>
+              <option value="Réussi">Réussi</option>
+              <option value="En cours">En cours</option>
+              <option value="Echoué">Echoué</option>
+              <option value="En attente">En attente</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payments Table -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>CODE</th>
+            <th>Date</th>
+            <th>Mode</th>
+            <th>Montant</th>
+            <th>Statut</th>
+            <th>Commentaire</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let payment of filteredPayments; let i = index"
+            class="animate-slide-in-right"
+            [ngClass]="'animation-delay-' + (i * 100)"
+          >
+            <td>{{ payment.code }}</td>
+            <td>{{ payment.date }}</td>
+            <td>{{ payment.mode }}</td>
+            <td>{{ payment.amount }} DT</td>
+            <td>
+              <span class="status" [ngClass]="getStatusClass(payment.status)">{{ payment.status }}</span>
+            </td>
+            <td>{{ payment.comment || 'Aucun' }}</td>
+            <td class="actions">
+              <button class="action-btn view" (click)="viewPayment(payment)" title="Voir">👁️</button>
+              <button class="action-btn edit" (click)="openEditPaymentModal(payment)" title="Éditer">✏️</button>
+              <button class="action-btn delete" (click)="confirmDeletePayment(payment)" title="Supprimer">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

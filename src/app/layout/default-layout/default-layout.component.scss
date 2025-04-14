@@ -1,34 +1,66 @@
-:host::ng-deep {
-  .ng-scrollbar {
-    --scrollbar-padding: 1px;
-    --scrollbar-size: 5px;
-    --scrollbar-thumb-color: var(--cui-gray-500, #aab3c5);
-    --scrollbar-thumb-hover-color: var(--cui-gray-400, #cfd4de);
-    --scrollbar-hover-size: calc(var(--scrollbar-size) * 1.5);
-    --scrollbar-border-radius: 5px;
-  }
-
-  .ng-scroll-content {
-    display: flex;
-    min-height: 100%;
-  }
-
-  //.sidebar-nav {
-  //  scrollbar-color: var(--cui-gray-500, #444) transparent;
-  //}
+.wrapper {
+  transition: all 0.3s ease;
 }
 
-// ng-scrollbar css variables
-//.cui-scrollbar {
-//  --scrollbar-border-radius: 7px;
-//  --scrollbar-padding: 1px;
-//  --scrollbar-viewport-margin: 0;
-//  --scrollbar-track-color: transparent;
-//  --scrollbar-wrapper-color: transparent;
-//  --scrollbar-thumb-color: rgba(0, 0, 0, 0.2);
-//  --scrollbar-thumb-hover-color: var(--scrollbar-thumb-color);
-//  --scrollbar-size: 5px;
-//  --scrollbar-hover-size: var(--scrollbar-size);
-//  --scrollbar-thumb-transition: height ease-out 150ms, width ease-out 150ms;
-//  --scrollbar-track-transition: height ease-out 150ms, width ease-out 150ms;
-//}
+.sidebar {
+  width: 250px;
+  transition: width 0.3s ease;
+}
+
+.sidebar-narrow {
+  width: 60px;
+}
+
+.sidebar-brand-full,
+.sidebar-brand-narrow {
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-brand-narrow {
+  display: none;
+}
+
+.sidebar-narrow .sidebar-brand-full {
+  display: none;
+}
+
+.sidebar-narrow .sidebar-brand-narrow {
+  display: flex;
+}
+
+.sidebar-nav {
+  font-size: 0.875rem;
+}
+
+.sidebar-nav .nav-link {
+  color: #1e40af; /* blue-800 */
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin: 0.25rem 1rem;
+  transition: background-color 0.3s, color 0.3s, transform 0.2s;
+}
+
+.sidebar-nav .nav-link:hover {
+  background-color: #e0f2fe; /* blue-100 */
+  color: #1e3a8a; /* blue-900 */
+  transform: translateX(5px);
+}
+
+.sidebar-nav .nav-link.active {
+  background-color: #bfdbfe; /* blue-200 */
+  color: #1e3a8a; /* blue-900 */
+  font-weight: 600;
+}
+
+.sidebar-footer button {
+  background: none;
+  border: none;
+  outline: none;
+}
+
+/* Animation delays */
+.animation-delay-100 { animation-delay: 100ms; }
+.animation-delay-200 { animation-delay: 200ms; }
+.animation-delay-300 { animation-delay: 300ms; }
+.animation-delay-400 { animation-delay: 400ms; }

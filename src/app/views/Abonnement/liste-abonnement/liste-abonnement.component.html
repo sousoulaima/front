@@ -1,0 +1,245 @@
+<div class="gestion-abonnements-container">
+    <div class="gestion-abonnements">
+      <!-- Modal for Editing an Abonnement -->
+      <div class="modal" *ngIf="showModal" @modalAnimation>
+        <div class="modal-content">
+          <h2 class="modal-title">Éditer l'abonnement</h2>
+          <form (ngSubmit)="saveAbonnement()" #abonnementForm="ngForm">
+            <div class="form-group">
+              <label>Adhérent</label>
+              <input
+                type="text"
+                [(ngModel)]="currentAbonnement.adherent"
+                name="adherent"
+                required
+                #adherent="ngModel"
+                class="form-input"
+                placeholder="Nom de l'adhérent"
+              />
+              <span class="error" *ngIf="adherent.invalid && adherent.touched">L'adhérent est requis</span>
+            </div>
+            <div class="form-group">
+              <label>Date Début</label>
+              <input
+                type="date"
+                [(ngModel)]="currentAbonnement.dateDebut"
+                name="dateDebut"
+                required
+                #dateDebut="ngModel"
+                class="form-input"
+              />
+              <span class="error" *ngIf="dateDebut.invalid && dateDebut.touched">La date de début est requise</span>
+            </div>
+            <div class="form-group">
+              <label>Date Fin</label>
+              <input
+                type="date"
+                [(ngModel)]="currentAbonnement.dateFin"
+                name="dateFin"
+                required
+                #dateFin="ngModel"
+                class="form-input"
+              />
+              <span class="error" *ngIf="dateFin.invalid && dateFin.touched">La date de fin est requise</span>
+            </div>
+            <div class="form-group">
+              <label>Type</label>
+              <select
+                [(ngModel)]="currentAbonnement.type"
+                name="type"
+                required
+                #type="ngModel"
+                class="form-input"
+              >
+                <option value="" disabled>Sélectionner un type</option>
+                <option value="Mensuel Standard">Mensuel Standard</option>
+                <option value="Mensuel Premium">Mensuel Premium</option>
+                <option value="Trimestriel Premium">Trimestriel Premium</option>
+                <option value="Annuel Standard">Annuel Standard</option>
+              </select>
+              <span class="error" *ngIf="type.invalid && type.touched">Le type est requis</span>
+            </div>
+            <div class="form-group">
+              <label>Montant (DT)</label>
+              <input
+                type="number"
+                [(ngModel)]="currentAbonnement.montant"
+                name="montant"
+                required
+                min="0"
+                step="0.01"
+                #montant="ngModel"
+                class="form-input"
+              />
+              <span class="error" *ngIf="montant.invalid && montant.touched">Le montant doit être un nombre ≥ 0</span>
+            </div>
+            <div class="form-group">
+              <label>Paiement</label>
+              <select
+                [(ngModel)]="currentAbonnement.paiement"
+                name="paiement"
+                required
+                #paiement="ngModel"
+                class="form-input"
+              >
+                <option value="" disabled>Sélectionner un paiement</option>
+                <option value="Payé">Payé</option>
+                <option value="Non payé">Non payé</option>
+                <option value="Partiel">Partiel</option>
+              </select>
+              <span class="error" *ngIf="paiement.invalid && paiement.touched">Le paiement est requis</span>
+            </div>
+            <div class="form-group">
+              <label>Statut</label>
+              <select
+                [(ngModel)]="currentAbonnement.statut"
+                name="statut"
+                required
+                #statut="ngModel"
+                class="form-input"
+              >
+                <option value="" disabled>Sélectionner un statut</option>
+                <option value="Actif">Actif</option>
+                <option value="Inactif">Inactif</option>
+              </select>
+              <span class="error" *ngIf="statut.invalid && statut.touched">Le statut est requis</span>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="cancel-btn" (click)="closeModal()">Annuler</button>
+              <button type="submit" class="save-btn" [disabled]="!abonnementForm.valid">Sauvegarder</button>
+            </div>
+          </form>
+        </div>
+      </div>
+  
+      <!-- Modal for Viewing an Abonnement -->
+      <div class="modal" *ngIf="showViewModal" @modalAnimation>
+        <div class="modal-content">
+          <h2 class="modal-title">Détails de l'abonnement</h2>
+          <div class="user-details">
+            <p><strong>Code :</strong> {{ viewedAbonnement?.code }}</p>
+            <p><strong>Adhérent :</strong> {{ viewedAbonnement?.adherent }}</p>
+            <p><strong>Date Début :</strong> {{ viewedAbonnement?.dateDebut }}</p>
+            <p><strong>Date Fin :</strong> {{ viewedAbonnement?.dateFin }}</p>
+            <p><strong>Type :</strong> {{ viewedAbonnement?.type }}</p>
+            <p><strong>Montant :</strong> {{ viewedAbonnement?.montant }} DT</p>
+            <p><strong>Paiement :</strong> <span [ngClass]="getPaiementClass(viewedAbonnement?.paiement)">{{ viewedAbonnement?.paiement }}</span></p>
+            <p><strong>Statut :</strong> <span [ngClass]="getStatutClass(viewedAbonnement?.statut)">{{ viewedAbonnement?.statut }}</span></p>
+          </div>
+          <div class="modal-actions">
+            <button class="close-btn" (click)="closeViewModal()">Fermer</button>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Modal for Delete Confirmation -->
+      <div class="modal" *ngIf="showDeleteConfirm" @modalAnimation>
+        <div class="modal-content">
+          <h2 class="modal-title">Confirmer la suppression</h2>
+          <p class="modal-text">Êtes-vous sûr de vouloir supprimer l'abonnement {{ abonnementToDelete?.code }} ?</p>
+          <div class="modal-actions">
+            <button class="cancel-btn" (click)="cancelDelete()">Annuler</button>
+            <button class="delete-btn" (click)="deleteAbonnement()">Supprimer</button>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Header Section -->
+      <div class="header">
+        <div class="header-title">
+          <h1 class="text-blue-800 animate-fade-in">Gestion des Abonnements</h1>
+          <p class="text-gray-600 animate-fade-in">Liste des abonnements enregistrés ({{ filteredAbonnements.length }} abonnements)</p>
+        </div>
+      </div>
+  
+      <!-- Search and Filter Section -->
+      <div class="search-filter">
+        <div class="search">
+          <input
+            type="text"
+            placeholder="Rechercher un abonnement..."
+            [(ngModel)]="searchQuery"
+            (input)="filterAbonnements()"
+            class="search-input"
+          />
+          <span class="search-icon">🔍</span>
+        </div>
+        <div class="filter-container">
+          <button class="filter-btn" (click)="toggleFilter()">Filtrer ▼</button>
+          <div class="filter-dropdown" *ngIf="showFilter" [@filterAnimation]>
+            <label class="filter-label">
+              Type :
+              <select [(ngModel)]="filterType" (change)="filterAbonnements()" class="filter-select">
+                <option value="">Tous</option>
+                <option value="Mensuel Standard">Mensuel Standard</option>
+                <option value="Mensuel Premium">Mensuel Premium</option>
+                <option value="Trimestriel Premium">Trimestriel Premium</option>
+                <option value="Annuel Standard">Annuel Standard</option>
+              </select>
+            </label>
+            <label class="filter-label">
+              Statut :
+              <select [(ngModel)]="filterStatut" (change)="filterAbonnements()" class="filter-select">
+                <option value="">Tous</option>
+                <option value="Actif">Actif</option>
+                <option value="Inactif">Inactif</option>
+              </select>
+            </label>
+            <label class="filter-label">
+              Paiement :
+              <select [(ngModel)]="filterPaiement" (change)="filterAbonnements()" class="filter-select">
+                <option value="">Tous</option>
+                <option value="Payé">Payé</option>
+                <option value="Non payé">Non payé</option>
+                <option value="Partiel">Partiel</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Abonnements Table -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>CODE</th>
+              <th>Adhérent</th>
+              <th>Date Début</th>
+              <th>Date Fin</th>
+              <th>Type</th>
+              <th>Montant</th>
+              <th>Paiement</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let abonnement of filteredAbonnements; let i = index"
+              class="animate-slide-in-right"
+              [ngClass]="'animation-delay-' + (i * 100)"
+            >
+              <td>{{ abonnement.code }}</td>
+              <td>{{ abonnement.adherent }}</td>
+              <td>{{ abonnement.dateDebut }}</td>
+              <td>{{ abonnement.dateFin }}</td>
+              <td>{{ abonnement.type }}</td>
+              <td>{{ abonnement.montant }} DT</td>
+              <td>
+                <span class="paiement" [ngClass]="getPaiementClass(abonnement.paiement)">{{ abonnement.paiement }}</span>
+              </td>
+              <td>
+                <span class="statut" [ngClass]="getStatutClass(abonnement.statut)">{{ abonnement.statut }}</span>
+              </td>
+              <td class="actions">
+                <button class="action-btn view" (click)="viewAbonnement(abonnement)" title="Voir">👁️</button>
+                <button class="action-btn edit" (click)="openEditAbonnementModal(abonnement)" title="Éditer">✏️</button>
+                <button class="action-btn delete" (click)="confirmDeleteAbonnement(abonnement)" title="Supprimer">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

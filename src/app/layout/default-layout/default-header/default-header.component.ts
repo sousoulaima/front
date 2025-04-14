@@ -5,7 +5,6 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import {
   AvatarComponent,
   BadgeComponent,
-  BreadcrumbRouterComponent,
   ColorModeService,
   ContainerComponent,
   DropdownComponent,
@@ -25,12 +24,31 @@ import {
 import { IconDirective } from '@coreui/icons-angular';
 
 @Component({
-    selector: 'app-default-header',
-    templateUrl: './default-header.component.html',
-  imports: [ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NavItemComponent, NavLinkDirective, RouterLink, RouterLinkActive, NgTemplateOutlet, BreadcrumbRouterComponent, DropdownComponent, DropdownToggleDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective, BadgeComponent, DropdownDividerDirective]
+  selector: 'app-default-header',
+  templateUrl: './default-header.component.html',
+  standalone: true,
+  imports: [
+    ContainerComponent,
+    HeaderTogglerDirective,
+    SidebarToggleDirective,
+    IconDirective,
+    HeaderNavComponent,
+    NavItemComponent,
+    NavLinkDirective,
+    RouterLink,
+    RouterLinkActive,
+    NgTemplateOutlet,
+    DropdownComponent,
+    DropdownToggleDirective,
+    AvatarComponent,
+    DropdownMenuDirective,
+    DropdownHeaderDirective,
+    DropdownItemDirective,
+    BadgeComponent,
+    DropdownDividerDirective
+  ]
 })
 export class DefaultHeaderComponent extends HeaderComponent {
-
   readonly #colorModeService = inject(ColorModeService);
   readonly colorMode = this.#colorModeService.colorMode;
 
@@ -45,10 +63,6 @@ export class DefaultHeaderComponent extends HeaderComponent {
     return this.colorModes.find(mode => mode.name === currentMode)?.icon ?? 'cilSun';
   });
 
-  constructor() {
-    super();
-  }
-
   sidebarId = input('sidebar1');
 
   public newMessages = [
@@ -60,7 +74,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
       title: 'Urgent: System Maintenance Tonight',
       time: 'Just now',
       link: 'apps/email/inbox/message',
-      message: 'Attention team, we\'ll be conducting critical system maintenance tonight from 10 PM to 2 AM. Plan accordingly...'
+      message: "Attention team, we'll be conducting critical system maintenance tonight from 10 PM to 2 AM. Plan accordingly..."
     },
     {
       id: 1,
@@ -70,7 +84,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
       title: 'Project Update: Milestone Achieved',
       time: '5 minutes ago',
       link: 'apps/email/inbox/message',
-      message: 'Kudos on hitting sales targets last quarter! Let\'s keep the momentum. New goals, new victories ahead...'
+      message: "Kudos on hitting sales targets last quarter! Let's keep the momentum. New goals, new victories ahead..."
     },
     {
       id: 2,
@@ -90,17 +104,17 @@ export class DefaultHeaderComponent extends HeaderComponent {
       title: 'Inventory Checkpoint',
       time: '4:03 AM',
       link: 'apps/email/inbox/message',
-      message: 'Team, it\'s time for our monthly inventory check. Accurate counts ensure smooth operations. Let\'s nail it...'
+      message: "Team, it's time for our monthly inventory check. Accurate counts ensure smooth operations. Let's nail it..."
     },
     {
-      id: 3,
+      id: 4,
       from: 'Ryan Miller',
       avatar: '4.jpg',
       status: 'info',
       title: 'Customer Feedback Results',
       time: '3 days ago',
       link: 'apps/email/inbox/message',
-      message: 'Our latest customer feedback is in. Let\'s analyze and discuss improvements for an even better service...'
+      message: 'Our latest customer feedback is in. Let’s analyze and discuss improvements for an even better service...'
     }
   ];
 
@@ -108,7 +122,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
     { id: 0, title: 'New user registered', icon: 'cilUserFollow', color: 'success' },
     { id: 1, title: 'User deleted', icon: 'cilUserUnfollow', color: 'danger' },
     { id: 2, title: 'Sales report is ready', icon: 'cilChartPie', color: 'info' },
-    { id: 3, title: 'New client', icon: 'cilBasket', color: 'primary' },
+    { id: 3, title: 'New client', icon: 'cilBasket', color: 'blue' },
     { id: 4, title: 'Server overloaded', icon: 'cilSpeedometer', color: 'warning' }
   ];
 
@@ -126,4 +140,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
     { id: 4, title: 'Angular Version', value: 100, color: 'success' }
   ];
 
+  constructor() {
+    super();
+  }
 }

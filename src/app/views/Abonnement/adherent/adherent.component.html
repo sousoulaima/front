@@ -1,200 +1,330 @@
 <div class="gestion-adherents-container">
-    <div class="gestion-adherents">
-      <!-- Modal for Adding/Editing an Adherent -->
-      <div class="modal" *ngIf="showModal" @modalAnimation>
-        <div class="modal-content">
-          <h2 class="modal-title">{{ isEditing ? 'Éditer l\'adhérent' : 'Ajouter un adhérent' }}</h2>
-          <form (ngSubmit)="saveAdherent()" #adherentForm="ngForm">
-            <div class="form-group">
-              <label>Nom</label>
-              <input
-                type="text"
-                [(ngModel)]="currentAdherent.nom"
-                name="nom"
-                required
-                #nom="ngModel"
-                class="form-input"
-                placeholder="Entrez le nom"
-              />
-              <span class="error" *ngIf="nom.invalid && nom.touched">Le nom est requis</span>
-            </div>
-            <div class="form-group">
-              <label>Prénom</label>
-              <input
-                type="text"
-                [(ngModel)]="currentAdherent.prenom"
-                name="prenom"
-                required
-                #prenom="ngModel"
-                class="form-input"
-                placeholder="Entrez le prénom"
-              />
-              <span class="error" *ngIf="prenom.invalid && prenom.touched">Le prénom est requis</span>
-            </div>
-            <div class="form-group">
-              <label>Email</label>
-              <input
-                type="email"
-                [(ngModel)]="currentAdherent.email"
-                name="email"
-                required
-                email
-                #email="ngModel"
-                class="form-input"
-                placeholder="Entrez l'email"
-              />
-              <span class="error" *ngIf="email.invalid && email.touched">
-                {{ email.errors?.['required'] ? 'L\'email est requis' : 'Veuillez entrer un email valide' }}
-              </span>
-            </div>
-            <div class="form-group">
-              <label>Téléphone</label>
-              <input
-                type="text"
-                [(ngModel)]="currentAdherent.telephone"
-                name="telephone"
-                required
-                pattern="^[0-9]{10}$"
-                #telephone="ngModel"
-                class="form-input"
-                placeholder="Entrez le numéro (10 chiffres)"
-              />
-              <span class="error" *ngIf="telephone.invalid && telephone.touched">
-                {{ telephone.errors?.['required'] ? 'Le téléphone est requis' : 'Veuillez entrer un numéro à 10 chiffres' }}
-              </span>
-            </div>
-            <div class="form-group">
-              <label>Profession</label>
-              <select
-                [(ngModel)]="currentAdherent.profession"
-                name="profession"
-                required
-                #profession="ngModel"
-                class="form-input"
-              >
-                <option value="Ingénieur">Ingénieur</option>
-                <option value="Médecin">Médecin</option>
-                <option value="Avocat">Avocat</option>
-                <option value="Architecte">Architecte</option>
-                <option value="Professeur">Professeur</option>
-                <option value="Designer">Designer</option>
-                <option value="Consultant">Consultant</option>
-              </select>
-              <span class="error" *ngIf="profession.invalid && profession.touched">La profession est requise</span>
-            </div>
-            <div class="modal-actions">
-              <button type="button" class="cancel-btn" (click)="closeModal()">Annuler</button>
-              <button type="submit" class="save-btn" [disabled]="!adherentForm.valid">Sauvegarder</button>
-            </div>
-          </form>
-        </div>
-      </div>
-  
-      <!-- Modal for Viewing an Adherent -->
-      <div class="modal" *ngIf="showViewModal" @modalAnimation>
-        <div class="modal-content">
-          <h2 class="modal-title">Détails de l'adhérent</h2>
-          <div class="user-details">
-            <p><strong>Code :</strong> {{ viewedAdherent?.code }}</p>
-            <p><strong>Nom :</strong> {{ viewedAdherent?.nom }}</p>
-            <p><strong>Prénom :</strong> {{ viewedAdherent?.prenom }}</p>
-            <p><strong>Email :</strong> {{ viewedAdherent?.email }}</p>
-            <p><strong>Téléphone :</strong> {{ viewedAdherent?.telephone }}</p>
-            <p><strong>Profession :</strong> {{ viewedAdherent?.profession }}</p>
+  <div class="gestion-adherents">
+    <!-- Modal for Adding/Editing an Adherent -->
+    <div class="modal" *ngIf="showModal" @modalAnimation>
+      <div class="modal-content">
+        <h2 class="modal-title">{{ isEditing ? 'Éditer l\'adhérent' : 'Ajouter un adhérent' }}</h2>
+        <form (ngSubmit)="saveAdherent()" #adherentForm="ngForm">
+          <div class="form-group">
+            <label>Code</label>
+            <input
+              type="text"
+              [(ngModel)]="currentAdherent.code"
+              name="code"
+              required
+              readonly
+              #code="ngModel"
+              class="form-input"
+            />
+            <span class="error" *ngIf="code.invalid && code.touched">Le code est requis</span>
+          </div>
+          <div class="form-group">
+            <label>Nom</label>
+            <input
+              type="text"
+              [(ngModel)]="currentAdherent.nom"
+              name="nom"
+              required
+              #nom="ngModel"
+              class="form-input"
+              placeholder="Entrez le nom"
+            />
+            <span class="error" *ngIf="nom.invalid && nom.touched">Le nom est requis</span>
+          </div>
+          <div class="form-group">
+            <label>Prénom</label>
+            <input
+              type="text"
+              [(ngModel)]="currentAdherent.prenom"
+              name="prenom"
+              required
+              #prenom="ngModel"
+              class="form-input"
+              placeholder="Entrez le prénom"
+            />
+            <span class="error" *ngIf="prenom.invalid && prenom.touched">Le prénom est requis</span>
+          </div>
+          <div class="form-group">
+            <label>Profession</label>
+            <input
+              type="text"
+              [(ngModel)]="currentAdherent.profession"
+              name="profession"
+              required
+              #profession="ngModel"
+              class="form-input"
+              placeholder="Entrez la profession"
+            />
+            <span class="error" *ngIf="profession.invalid && profession.touched">La profession est requise</span>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              [(ngModel)]="currentAdherent.email"
+              name="email"
+              required
+              email
+              #email="ngModel"
+              class="form-input"
+              placeholder="Entrez l'email"
+            />
+            <span class="error" *ngIf="email.invalid && email.touched">
+              {{ email.errors?.['required'] ? 'L\'email est requis' : 'Veuillez entrer un email valide' }}
+            </span>
+          </div>
+          <div class="form-group">
+            <label>Adresse</label>
+            <input
+              type="text"
+              [(ngModel)]="currentAdherent.adresse"
+              name="adresse"
+              required
+              #adresse="ngModel"
+              class="form-input"
+              placeholder="Entrez l'adresse"
+            />
+            <span class="error" *ngIf="adresse.invalid && adresse.touched">L'adresse est requise</span>
+          </div>
+          <div class="form-group">
+            <label>Téléphone 1</label>
+            <input
+              type="text"
+              [(ngModel)]="currentAdherent.tel1"
+              name="tel1"
+              required
+              pattern="^[0-9]{10}$"
+              #tel1="ngModel"
+              class="form-input"
+              placeholder="Entrez le numéro (10 chiffres)"
+            />
+            <span class="error" *ngIf="tel1.invalid && tel1.touched">
+              {{ tel1.errors?.['required'] ? 'Le téléphone est requis' : 'Veuillez entrer un numéro à 10 chiffres' }}
+            </span>
+          </div>
+          <div class="form-group">
+            <label>Téléphone 2 (optionnel)</label>
+            <input
+              type="text"
+              [(ngModel)]="currentAdherent.tel2"
+              name="tel2"
+              pattern="^[0-9]{10}$"
+              #tel2="ngModel"
+              class="form-input"
+              placeholder="Entrez un second numéro (optionnel)"
+            />
+            <span class="error" *ngIf="tel2.invalid && tel2.touched">
+              Veuillez entrer un numéro à 10 chiffres
+            </span>
+          </div>
+          <div class="form-group">
+            <label>Date de Naissance</label>
+            <input
+              type="date"
+              [(ngModel)]="currentAdherent.dateNaissance"
+              name="dateNaissance"
+              required
+              #dateNaissance="ngModel"
+              class="form-input"
+            />
+            <span class="error" *ngIf="dateNaissance.invalid && dateNaissance.touched">La date de naissance est requise</span>
+          </div>
+          <div class="form-group">
+            <label>CIN</label>
+            <input
+              type="text"
+              [(ngModel)]="currentAdherent.cin"
+              name="cin"
+              required
+              pattern="^[0-9]{8}$"
+              #cin="ngModel"
+              class="form-input"
+              placeholder="Entrez le CIN (8 chiffres)"
+            />
+            <span class="error" *ngIf="cin.invalid && cin.touched">
+              {{ cin.errors?.['required'] ? 'Le CIN est requis' : 'Veuillez entrer un CIN à 8 chiffres' }}
+            </span>
+          </div>
+          <div class="form-group">
+            <label>Code TVA (optionnel)</label>
+            <input
+              type="text"
+              [(ngModel)]="currentAdherent.codeTVA"
+              name="codeTVA"
+              #codeTVA="ngModel"
+              class="form-input"
+              placeholder="Entrez le code TVA (optionnel)"
+            />
+          </div>
+          <div class="form-group">
+            <label>Raison Sociale (optionnel)</label>
+            <input
+              type="text"
+              [(ngModel)]="currentAdherent.raisonSoc"
+              name="raisonSoc"
+              #raisonSoc="ngModel"
+              class="form-input"
+              placeholder="Entrez la raison sociale (optionnel)"
+            />
+          </div>
+          <div class="form-group">
+            <label>ID Pointage (optionnel)</label>
+            <input
+              type="text"
+              [(ngModel)]="currentAdherent.idPointage"
+              name="idPointage"
+              #idPointage="ngModel"
+              class="form-input"
+              placeholder="Entrez l'ID de pointage (optionnel)"
+            />
+          </div>
+          <div class="form-group">
+            <label>Code Société</label>
+            <input
+              type="text"
+              [(ngModel)]="currentAdherent.societeCode"
+              name="societeCode"
+              required
+              #societeCode="ngModel"
+              class="form-input"
+              placeholder="Entrez le code de la société"
+            />
+            <span class="error" *ngIf="societeCode.invalid && societeCode.touched">Le code de la société est requis</span>
           </div>
           <div class="modal-actions">
-            <button class="close-btn" (click)="closeViewModal()">Fermer</button>
+            <button type="button" class="cancel-btn" (click)="closeModal()">Annuler</button>
+            <button type="submit" class="save-btn" [disabled]="!adherentForm.valid">Sauvegarder</button>
           </div>
-        </div>
-      </div>
-  
-      <!-- Modal for Delete Confirmation -->
-      <div class="modal" *ngIf="showDeleteConfirm" @modalAnimation>
-        <div class="modal-content">
-          <h2 class="modal-title">Confirmer la suppression</h2>
-          <p class="modal-text">Êtes-vous sûr de vouloir supprimer l'adhérent {{ adherentToDelete?.code }} ?</p>
-          <div class="modal-actions">
-            <button class="cancel-btn" (click)="cancelDelete()">Annuler</button>
-            <button class="delete-btn" (click)="deleteAdherent()">Supprimer</button>
-          </div>
-        </div>
-      </div>
-  
-      <!-- Header Section -->
-      <div class="header">
-        <div class="header-title">
-          <h1 class="text-blue-800 animate-fade-in">Gestion des Adhérents</h1>
-          <p class="text-gray-600 animate-fade-in">Liste des adhérents enregistrés ({{ filteredAdherents.length }} adhérents)</p>
-        </div>
-        <button class="add-btn bg-blue-600 hover:bg-blue-700 text-white" (click)="openAddAdherentModal()">+ Ajouter un adhérent</button>
-      </div>
-  
-      <!-- Search and Filter Section -->
-      <div class="search-filter">
-        <div class="search">
-          <input
-            type="text"
-            placeholder="Rechercher un adhérent..."
-            [(ngModel)]="searchQuery"
-            (input)="filterAdherents()"
-            class="search-input"
-          />
-          <span class="search-icon">🔍</span>
-        </div>
-        <div class="filter-container">
-          <button class="filter-btn" (click)="toggleFilter()">Filtrer ▼</button>
-          <div class="filter-dropdown" *ngIf="showFilter">
-            <label class="filter-label">
-              Profession :
-              <select [(ngModel)]="filterProfession" (change)="filterAdherents()" class="filter-select">
-                <option value="">Toutes</option>
-                <option value="Ingénieur">Ingénieur</option>
-                <option value="Médecin">Médecin</option>
-                <option value="Avocat">Avocat</option>
-                <option value="Architecte">Architecte</option>
-                <option value="Professeur">Professeur</option>
-                <option value="Designer">Designer</option>
-                <option value="Consultant">Consultant</option>
-              </select>
-            </label>
-          </div>
-        </div>
-      </div>
-  
-      <!-- Adherents Table -->
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>CODE</th>
-              <th>Nom</th>
-              <th>Prénom</th>
-              <th>Email</th>
-              <th>Téléphone</th>
-              <th>Profession</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              *ngFor="let adherent of filteredAdherents; let i = index"
-              class="animate-slide-in-right"
-              [ngClass]="'animation-delay-' + (i * 100)"
-            >
-              <td>{{ adherent.code }}</td>
-              <td>{{ adherent.nom }}</td>
-              <td>{{ adherent.prenom }}</td>
-              <td>{{ adherent.email }}</td>
-              <td>{{ adherent.telephone }}</td>
-              <td>{{ adherent.profession }}</td>
-              <td class="actions">
-                <button class="action-btn view" (click)="viewAdherent(adherent)" title="Voir">👁️</button>
-                <button class="action-btn edit" (click)="openEditAdherentModal(adherent)" title="Éditer">✏️</button>
-                <button class="action-btn delete" (click)="confirmDeleteAdherent(adherent)" title="Supprimer">🗑️</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        </form>
       </div>
     </div>
+
+    <!-- Modal for Viewing an Adherent -->
+    <div class="modal" *ngIf="showViewModal" @modalAnimation>
+      <div class="modal-content">
+        <h2 class="modal-title">Détails de l'adhérent</h2>
+        <div class="user-details">
+          <p><strong>Code :</strong> {{ viewedAdherent?.code }}</p>
+          <p><strong>Nom :</strong> {{ viewedAdherent?.nom }}</p>
+          <p><strong>Prénom :</strong> {{ viewedAdherent?.prenom }}</p>
+          <p><strong>Profession :</strong> {{ viewedAdherent?.profession }}</p>
+          <p><strong>Email :</strong> {{ viewedAdherent?.email }}</p>
+          <p><strong>Adresse :</strong> {{ viewedAdherent?.adresse }}</p>
+          <p><strong>Téléphone 1 :</strong> {{ viewedAdherent?.tel1 }}</p>
+          <p><strong>Téléphone 2 :</strong> {{ viewedAdherent?.tel2 || 'N/A' }}</p>
+          <p><strong>Date de Naissance :</strong> {{ viewedAdherent?.dateNaissance }}</p>
+          <p><strong>CIN :</strong> {{ viewedAdherent?.cin }}</p>
+          <p><strong>Code TVA :</strong> {{ viewedAdherent?.codeTVA || 'N/A' }}</p>
+          <p><strong>Raison Sociale :</strong> {{ viewedAdherent?.raisonSoc || 'N/A' }}</p>
+          <p><strong>ID Pointage :</strong> {{ viewedAdherent?.idPointage || 'N/A' }}</p>
+          <p><strong>Code Société :</strong> {{ viewedAdherent?.societeCode }}</p>
+        </div>
+        <div class="modal-actions">
+          <button class="close-btn" (click)="closeViewModal()">Fermer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Delete Confirmation -->
+    <div class="modal" *ngIf="showDeleteConfirm" @modalAnimation>
+      <div class="modal-content">
+        <h2 class="modal-title">Confirmer la suppression</h2>
+        <p class="modal-text">Êtes-vous sûr de vouloir supprimer l'adhérent {{ adherentToDelete?.code }} ?</p>
+        <div class="modal-actions">
+          <button class="cancel-btn" (click)="cancelDelete()">Annuler</button>
+          <button class="delete-btn" (click)="deleteAdherent()">Supprimer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header Section -->
+    <div class="header">
+      <div class="header-title">
+        <h1 class="text-blue-800 animate-fade-in">Gestion des Adhérents</h1>
+        <p class="text-gray-600 animate-fade-in">Liste des adhérents enregistrés ({{ filteredAdherents.length }} adhérents)</p>
+      </div>
+      <button class="add-btn bg-blue-600 hover:bg-blue-700 text-white" (click)="openAddAdherentModal()">+ Ajouter un adhérent</button>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="search-filter">
+      <div class="search">
+        <input
+          type="text"
+          placeholder="Rechercher un adhérent..."
+          [(ngModel)]="searchQuery"
+          (input)="filterAdherents()"
+          class="search-input"
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+      <div class="filter-container">
+        <button class="filter-btn" (click)="toggleFilter()">Filtrer ▼</button>
+        <div class="filter-dropdown" *ngIf="showFilter">
+          <label class="filter-label">
+            Profession :
+            <input
+              type="text"
+              [(ngModel)]="filterProfession"
+              (input)="filterAdherents()"
+              class="filter-input"
+              placeholder="Entrez une profession"
+            />
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Adherents Table -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>CODE</th>
+            <th>NOM</th>
+            <th>PRÉNOM</th>
+            <th>PROFESSION</th>
+            <th>EMAIL</th>
+            <th>ADRESSE</th>
+            <th>TÉLÉPHONE 1</th>
+            <th>TÉLÉPHONE 2</th>
+            <th>DATE NAISSANCE</th>
+            <th>CIN</th>
+            <th>CODE TVA</th>
+            <th>RAISON SOCIALE</th>
+            <th>ID POINTAGE</th>
+            <th>CODE SOCIÉTÉ</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let adherent of filteredAdherents; let i = index"
+            class="animate-slide-in-right"
+            [ngClass]="'animation-delay-' + (i * 100)"
+          >
+            <td>{{ adherent.code }}</td>
+            <td>{{ adherent.nom }}</td>
+            <td>{{ adherent.prenom }}</td>
+            <td>{{ adherent.profession }}</td>
+            <td>{{ adherent.email }}</td>
+            <td>{{ adherent.adresse }}</td>
+            <td>{{ adherent.tel1 }}</td>
+            <td>{{ adherent.tel2 || 'N/A' }}</td>
+            <td>{{ adherent.dateNaissance }}</td>
+            <td>{{ adherent.cin }}</td>
+            <td>{{ adherent.codeTVA || 'N/A' }}</td>
+            <td>{{ adherent.raisonSoc || 'N/A' }}</td>
+            <td>{{ adherent.idPointage || 'N/A' }}</td>
+            <td>{{ adherent.societeCode }}</td>
+            <td class="actions">
+              <button class="action-btn view" (click)="viewAdherent(adherent)" title="Voir">👁️</button>
+              <button class="action-btn edit" (click)="openEditAdherentModal(adherent)" title="Éditer">✏️</button>
+              <button class="action-btn delete" (click)="confirmDeleteAdherent(adherent)" title="Supprimer">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
+</div>

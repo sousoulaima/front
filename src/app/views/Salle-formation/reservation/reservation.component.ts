@@ -4,33 +4,30 @@ import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 interface Salle {
-  code: string;
-  designation: string;
-  capacite: number;
-  prixHeure: number;
-  prixJour: number;
-  statut: 'Disponible' | 'Réservée' | 'Maintenance';
+  codeSalle: string;
+  designationSalle: string;
+  capaciteSalle: number;
+  prixHeureSalle: number;
+  prixJourSalle: number;
 }
 
 interface Formateur {
-  code: string;
-  nom: string;
-  prenom: string;
-  email: string;
-  telephone: string;
-  specialite: string;
-  statut: 'Actif' | 'Inactif';
+  codeFor: string;
+  nomFor: string;
+  prenomFor: string;
+  telFor: string;
+  emailFor: string;
+  adrFor: string;
 }
 
 interface Reservation {
   id: string;
-  date: string;
-  horaire: string;
-  salleCode: string;
-  formateurCode: string;
-  montant: number;
-  participants: string;
-  statut: 'À venir' | 'Terminée';
+  dateReservation: string;
+  montantReservation: number;
+  codeSalle: string;
+  codeFor: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 @Component({
@@ -63,7 +60,6 @@ interface Reservation {
 export class ReservationComponent {
   searchQuery = '';
   filterSalleCode = '';
-  filterStatut = '';
   showFilter = false;
   showModal = false;
   showViewModal = false;
@@ -75,190 +71,170 @@ export class ReservationComponent {
 
   salles: Salle[] = [
     {
-      code: 'SALLE-001',
-      designation: 'Salle A - Yoga',
-      capacite: 20,
-      prixHeure: 35,
-      prixJour: 250,
-      statut: 'Disponible',
+      codeSalle: 'SALLE-001',
+      designationSalle: 'Salle A - Yoga',
+      capaciteSalle: 20,
+      prixHeureSalle: 35,
+      prixJourSalle: 250,
     },
     {
-      code: 'SALLE-002',
-      designation: 'Salle B - Musculation',
-      capacite: 20,
-      prixHeure: 40,
-      prixJour: 280,
-      statut: 'Disponible',
+      codeSalle: 'SALLE-002',
+      designationSalle: 'Salle B - Musculation',
+      capaciteSalle: 20,
+      prixHeureSalle: 40,
+      prixJourSalle: 280,
     },
     {
-      code: 'SALLE-003',
-      designation: 'Salle C - Cardio',
-      capacite: 20,
-      prixHeure: 35,
-      prixJour: 250,
-      statut: 'Disponible',
+      codeSalle: 'SALLE-003',
+      designationSalle: 'Salle C - Cardio',
+      capaciteSalle: 20,
+      prixHeureSalle: 35,
+      prixJourSalle: 250,
     },
     {
-      code: 'SALLE-004',
-      designation: 'Salle D - Pilates',
-      capacite: 15,
-      prixHeure: 40,
-      prixJour: 280,
-      statut: 'Réservée',
+      codeSalle: 'SALLE-004',
+      designationSalle: 'Salle D - Pilates',
+      capaciteSalle: 15,
+      prixHeureSalle: 40,
+      prixJourSalle: 280,
     },
     {
-      code: 'SALLE-005',
-      designation: 'Salle E - CrossFit',
-      capacite: 10,
-      prixHeure: 45,
-      prixJour: 300,
-      statut: 'Disponible',
+      codeSalle: 'SALLE-005',
+      designationSalle: 'Salle E - CrossFit',
+      capaciteSalle: 10,
+      prixHeureSalle: 45,
+      prixJourSalle: 300,
     },
     {
-      code: 'SALLE-006',
-      designation: 'Salle F - Danse',
-      capacite: 25,
-      prixHeure: 38,
-      prixJour: 270,
-      statut: 'Réservée',
+      codeSalle: 'SALLE-006',
+      designationSalle: 'Salle F - Danse',
+      capaciteSalle: 25,
+      prixHeureSalle: 38,
+      prixJourSalle: 270,
     },
     {
-      code: 'SALLE-007',
-      designation: 'Salle G - Spinning',
-      capacite: 18,
-      prixHeure: 42,
-      prixJour: 290,
-      statut: 'Maintenance',
+      codeSalle: 'SALLE-007',
+      designationSalle: 'Salle G - Spinning',
+      capaciteSalle: 18,
+      prixHeureSalle: 42,
+      prixJourSalle: 290,
     },
   ];
 
   formateurs: Formateur[] = [
     {
-      code: 'FOR-001',
-      nom: 'Leroy',
-      prenom: 'Marie',
-      email: 'marie.leroy@email.com',
-      telephone: '0612345678',
-      specialite: 'Yoga, Pilates',
-      statut: 'Actif',
+      codeFor: 'FOR-001',
+      nomFor: 'Leroy',
+      prenomFor: 'Marie',
+      telFor: '0612345678',
+      emailFor: 'marie.leroy@email.com',
+      adrFor: '123 Rue de Paris, 75001 Paris',
     },
     {
-      code: 'FOR-002',
-      nom: 'Girard',
-      prenom: 'Thomas',
-      email: 'thomas.girard@email.com',
-      telephone: '0698765432',
-      specialite: 'Musculation, HIIT',
-      statut: 'Actif',
+      codeFor: 'FOR-002',
+      nomFor: 'Girard',
+      prenomFor: 'Thomas',
+      telFor: '0698765432',
+      emailFor: 'thomas.girard@email.com',
+      adrFor: '456 Avenue des Champs, 75008 Paris',
     },
     {
-      code: 'FOR-003',
-      nom: 'Petit',
-      prenom: 'Julie',
-      email: 'julie.petit@email.com',
-      telephone: '0654321987',
-      specialite: 'Cardio, HIIT',
-      statut: 'Actif',
+      codeFor: 'FOR-003',
+      nomFor: 'Petit',
+      prenomFor: 'Julie',
+      telFor: '0654321987',
+      emailFor: 'julie.petit@email.com',
+      adrFor: '789 Boulevard St-Germain, 75006 Paris',
     },
     {
-      code: 'FOR-004',
-      nom: 'Blanc',
-      prenom: 'Sophie',
-      email: 'sophie.blanc@email.com',
-      telephone: '0678901234',
-      specialite: 'Pilates, Stretching',
-      statut: 'Actif',
+      codeFor: 'FOR-004',
+      nomFor: 'Blanc',
+      prenomFor: 'Sophie',
+      telFor: '0678901234',
+      emailFor: 'sophie.blanc@email.com',
+      adrFor: '321 Rue de Lyon, 69003 Lyon',
     },
     {
-      code: 'FOR-005',
-      nom: 'Martin',
-      prenom: 'Lucas',
-      email: 'lucas.martin@email.com',
-      telephone: '0712345678',
-      specialite: 'Boxe, Arts martiaux',
-      statut: 'Inactif',
+      codeFor: 'FOR-005',
+      nomFor: 'Martin',
+      prenomFor: 'Lucas',
+      telFor: '0712345678',
+      emailFor: 'lucas.martin@email.com',
+      adrFor: '654 Avenue de la Mer, 13001 Marseille',
     },
     {
-      code: 'FOR-006',
-      nom: 'Rousseau',
-      prenom: 'Emma',
-      email: 'emma.rousseau@email.com',
-      telephone: '0687654321',
-      specialite: 'Zumba, Danse',
-      statut: 'Actif',
+      codeFor: 'FOR-006',
+      nomFor: 'Rousseau',
+      prenomFor: 'Emma',
+      telFor: '0687654321',
+      emailFor: 'emma.rousseau@email.com',
+      adrFor: '987 Rue du Nord, 59000 Lille',
     },
   ];
 
   reservations: Reservation[] = [
     {
       id: 'RES-001',
-      date: '2025-04-09',
-      horaire: '10:00 - 11:30',
-      salleCode: 'SALLE-001',
-      formateurCode: 'FOR-001',
-      montant: 35,
-      participants: '15/20',
-      statut: 'À venir',
+      dateReservation: '2025-04-09',
+      montantReservation: 250,
+      codeSalle: 'SALLE-001',
+      codeFor: 'FOR-001',
+      created_at: '2025-04-01 10:00:00',
+      updated_at: '2025-04-01 10:00:00',
     },
     {
       id: 'RES-002',
-      date: '2025-04-09',
-      horaire: '14:00 - 15:30',
-      salleCode: 'SALLE-002',
-      formateurCode: 'FOR-002',
-      montant: 40,
-      participants: '10/15',
-      statut: 'À venir',
+      dateReservation: '2025-04-09',
+      montantReservation: 280,
+      codeSalle: 'SALLE-002',
+      codeFor: 'FOR-002',
+      created_at: '2025-04-01 11:00:00',
+      updated_at: '2025-04-01 11:00:00',
     },
     {
       id: 'RES-003',
-      date: '2025-04-09',
-      horaire: '17:00 - 18:30',
-      salleCode: 'SALLE-003',
-      formateurCode: 'FOR-003',
-      montant: 35,
-      participants: '18/20',
-      statut: 'À venir',
+      dateReservation: '2025-04-09',
+      montantReservation: 250,
+      codeSalle: 'SALLE-003',
+      codeFor: 'FOR-003',
+      created_at: '2025-04-01 12:00:00',
+      updated_at: '2025-04-01 12:00:00',
     },
     {
       id: 'RES-004',
-      date: '2025-04-10',
-      horaire: '10:00 - 11:30',
-      salleCode: 'SALLE-001',
-      formateurCode: 'FOR-001',
-      montant: 35,
-      participants: '8/20',
-      statut: 'À venir',
+      dateReservation: '2025-04-10',
+      montantReservation: 250,
+      codeSalle: 'SALLE-001',
+      codeFor: 'FOR-001',
+      created_at: '2025-04-02 09:00:00',
+      updated_at: '2025-04-02 09:00:00',
     },
     {
       id: 'RES-005',
-      date: '2025-04-10',
-      horaire: '18:00 - 19:30',
-      salleCode: 'SALLE-004',
-      formateurCode: 'FOR-004',
-      montant: 40,
-      participants: '10/15',
-      statut: 'À venir',
+      dateReservation: '2025-04-10',
+      montantReservation: 280,
+      codeSalle: 'SALLE-004',
+      codeFor: 'FOR-004',
+      created_at: '2025-04-02 10:00:00',
+      updated_at: '2025-04-02 10:00:00',
     },
     {
       id: 'RES-006',
-      date: '2025-04-08',
-      horaire: '14:00 - 15:30',
-      salleCode: 'SALLE-005',
-      formateurCode: 'FOR-005',
-      montant: 45,
-      participants: '8/10',
-      statut: 'Terminée',
+      dateReservation: '2025-04-08',
+      montantReservation: 300,
+      codeSalle: 'SALLE-005',
+      codeFor: 'FOR-005',
+      created_at: '2025-03-31 14:00:00',
+      updated_at: '2025-03-31 14:00:00',
     },
     {
       id: 'RES-007',
-      date: '2025-04-08',
-      horaire: '18:00 - 19:30',
-      salleCode: 'SALLE-006',
-      formateurCode: 'FOR-006',
-      montant: 38,
-      participants: '22/25',
-      statut: 'Terminée',
+      dateReservation: '2025-04-08',
+      montantReservation: 270,
+      codeSalle: 'SALLE-006',
+      codeFor: 'FOR-006',
+      created_at: '2025-03-31 15:00:00',
+      updated_at: '2025-03-31 15:00:00',
     },
   ];
 
@@ -270,31 +246,25 @@ export class ReservationComponent {
   resetReservation(): Partial<Reservation> {
     return {
       id: '',
-      date: this.today,
-      horaire: '',
-      salleCode: this.salles[0]?.code || '',
-      formateurCode: this.formateurs[0]?.code || '',
-      montant: 0,
-      participants: '',
-      statut: 'À venir',
+      dateReservation: this.today,
+      montantReservation: 0,
+      codeSalle: this.salles[0]?.codeSalle || '',
+      codeFor: this.formateurs[0]?.codeFor || '',
     };
   }
 
   filterReservations(): void {
     this.filteredReservations = this.reservations.filter((reservation) => {
       const query = this.searchQuery.toLowerCase();
-      const salle = this.salles.find((s) => s.code === reservation.salleCode);
-      const formateur = this.formateurs.find((f) => f.code === reservation.formateurCode);
+      const salle = this.salles.find((s) => s.codeSalle === reservation.codeSalle);
+      const formateur = this.formateurs.find((f) => f.codeFor === reservation.codeFor);
       const matchesSearch =
         reservation.id.toLowerCase().includes(query) ||
-        reservation.date.toLowerCase().includes(query) ||
-        reservation.horaire.toLowerCase().includes(query) ||
-        (salle?.designation || '').toLowerCase().includes(query) ||
-        `${formateur?.nom || ''} ${formateur?.prenom || ''}`.toLowerCase().includes(query) ||
-        reservation.participants.toLowerCase().includes(query);
-      const matchesSalle = this.filterSalleCode ? reservation.salleCode === this.filterSalleCode : true;
-      const matchesStatut = this.filterStatut ? reservation.statut === this.filterStatut : true;
-      return matchesSearch && matchesSalle && matchesStatut;
+        reservation.dateReservation.toLowerCase().includes(query) ||
+        (salle?.designationSalle || '').toLowerCase().includes(query) ||
+        `${formateur?.nomFor || ''} ${formateur?.prenomFor || ''}`.toLowerCase().includes(query);
+      const matchesSalle = this.filterSalleCode ? reservation.codeSalle === this.filterSalleCode : true;
+      return matchesSearch && matchesSalle;
     });
     this.cdr.detectChanges();
   }
@@ -304,29 +274,21 @@ export class ReservationComponent {
     this.cdr.detectChanges();
   }
 
-  getStatutClass(statut: string | undefined): string {
-    return statut ? statut.replace(' ', '-') : '';
+  getSalleDesignation(codeSalle: string | undefined): string {
+    const salle = this.salles.find((s) => s.codeSalle === codeSalle);
+    return salle ? salle.designationSalle : 'N/A';
   }
 
-  getSalleDesignation(salleCode: string | undefined): string {
-    const salle = this.salles.find((s) => s.code === salleCode);
-    return salle ? salle.designation : 'N/A';
-  }
-
-  getFormateurName(formateurCode: string | undefined): string {
-    const formateur = this.formateurs.find((f) => f.code === formateurCode);
-    return formateur ? `${formateur.nom} ${formateur.prenom}` : 'N/A';
+  getFormateurName(codeFor: string | undefined): string {
+    const formateur = this.formateurs.find((f) => f.codeFor === codeFor);
+    return formateur ? `${formateur.nomFor} ${formateur.prenomFor}` : 'N/A';
   }
 
   updateMontant(): void {
-    const salle = this.salles.find((s) => s.code === this.currentReservation.salleCode);
+    const salle = this.salles.find((s) => s.codeSalle === this.currentReservation.codeSalle);
     if (salle) {
-      const [start, end] = (this.currentReservation.horaire || '00:00 - 00:00').split(' - ').map((time) => {
-        const [h, m] = time.split(':').map(Number);
-        return h + m / 60;
-      });
-      const hours = end - start;
-      this.currentReservation.montant = hours > 0 ? Number((salle.prixHeure * hours).toFixed(2)) : salle.prixHeure;
+      // Since horaire is removed, assume a full-day reservation for simplicity
+      this.currentReservation.montantReservation = salle.prixJourSalle;
     }
   }
 
@@ -353,13 +315,22 @@ export class ReservationComponent {
   }
 
   saveReservation(): void {
+    const now = new Date().toISOString().replace('T', ' ').split('.')[0];
     if (this.isEditing) {
       const index = this.reservations.findIndex((r) => r.id === this.currentReservation.id);
       if (index !== -1) {
-        this.reservations[index] = { ...this.currentReservation } as Reservation;
+        this.reservations[index] = {
+          ...this.currentReservation,
+          updated_at: now,
+          created_at: this.reservations[index].created_at, // Preserve original created_at
+        } as Reservation;
       }
     } else {
-      this.reservations.push({ ...this.currentReservation } as Reservation);
+      this.reservations.push({
+        ...this.currentReservation,
+        created_at: now,
+        updated_at: now,
+      } as Reservation);
     }
     this.filteredReservations = [...this.reservations];
     this.closeModal();

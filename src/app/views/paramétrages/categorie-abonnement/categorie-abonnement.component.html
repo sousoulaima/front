@@ -6,36 +6,31 @@
         <h2 class="modal-title">{{ isEditMode ? 'Modifier la catégorie' : 'Ajouter une catégorie' }}</h2>
         <form (ngSubmit)="saveCategorie()" #categorieForm="ngForm">
           <div class="form-group">
+            <label>Code</label>
+            <input
+              type="text"
+              [(ngModel)]="newCategorie.codeCateg"
+              name="codeCateg"
+              required
+              readonly
+              #codeCateg="ngModel"
+              class="form-input"
+              placeholder="Code généré automatiquement"
+            />
+            <span class="error" *ngIf="codeCateg.invalid && codeCateg.touched">Le code est requis</span>
+          </div>
+          <div class="form-group">
             <label>Désignation</label>
             <input
               type="text"
-              [(ngModel)]="newCategorie.designation"
-              name="designation"
+              [(ngModel)]="newCategorie.designationCateg"
+              name="designationCateg"
               required
-              #designation="ngModel"
+              #designationCateg="ngModel"
               class="form-input"
               placeholder="Entrez la désignation"
             />
-            <span class="error" *ngIf="designation.invalid && designation.touched">La désignation est requise</span>
-          </div>
-          <div class="form-group">
-            <label>Description</label>
-            <textarea
-              [(ngModel)]="newCategorie.description"
-              name="description"
-              required
-              #description="ngModel"
-              class="form-input"
-              placeholder="Entrez la description"
-            ></textarea>
-            <span class="error" *ngIf="description.invalid && description.touched">La description est requise</span>
-          </div>
-          <div class="form-group">
-            <label>Statut</label>
-            <select [(ngModel)]="newCategorie.statut" name="statut" required class="form-input">
-              <option value="Actif">Actif</option>
-              <option value="Inactif">Inactif</option>
-            </select>
+            <span class="error" *ngIf="designationCateg.invalid && designationCateg.touched">La désignation est requise</span>
           </div>
           <div class="modal-actions">
             <button type="button" class="cancel-btn" (click)="closeModal()">Annuler</button>
@@ -54,7 +49,7 @@
       <button class="add-btn bg-blue-600 hover:bg-blue-700 text-white" (click)="openAddModal()">+ Ajouter une catégorie</button>
     </div>
 
-    <!-- Search and Filter Section -->
+    <!-- Search Section -->
     <div class="search-filter">
       <div class="search">
         <input
@@ -66,19 +61,6 @@
         />
         <span class="search-icon">🔍</span>
       </div>
-      <div class="filter-container">
-        <button class="filter-btn" (click)="toggleFilterDropdown()">Filtrer ▼</button>
-        <div class="filter-dropdown" *ngIf="showFilterDropdown">
-          <label class="filter-label">
-            Statut :
-            <select [(ngModel)]="filterStatut" (change)="filterCategories()" class="filter-select">
-              <option value="">Tous</option>
-              <option value="Actif">Actif</option>
-              <option value="Inactif">Inactif</option>
-            </select>
-          </label>
-        </div>
-      </div>
     </div>
 
     <!-- Categories Table -->
@@ -86,11 +68,9 @@
       <table>
         <thead>
           <tr>
-            <th>Code</th>
-            <th>Désignation</th>
-            <th>Description</th>
-            <th>Statut</th>
-            <th>Actions</th>
+            <th>CODE</th>
+            <th>DÉSIGNATION</th>
+            <th>ACTIONS</th>
           </tr>
         </thead>
         <tbody>
@@ -99,14 +79,8 @@
             class="animate-slide-in-right"
             [ngClass]="'animation-delay-' + (i * 100)"
           >
-            <td>{{ categorie.code }}</td>
-            <td>{{ categorie.designation }}</td>
-            <td>{{ categorie.description }}</td>
-            <td>
-              <span class="status" [ngClass]="categorie.statut === 'Actif' ? 'active' : 'inactive'" (click)="toggleStatut(categorie)">
-                {{ categorie.statut }}
-              </span>
-            </td>
+            <td>{{ categorie.codeCateg }}</td>
+            <td>{{ categorie.designationCateg }}</td>
             <td class="actions">
               <button class="action-btn view" (click)="voirCategorie(categorie)" title="Voir">👁️</button>
               <button class="action-btn edit" (click)="openEditModal(categorie)" title="Éditer">✏️</button>
@@ -122,10 +96,8 @@
       <div class="modal-content">
         <h2 class="modal-title">Détails de la catégorie</h2>
         <div class="user-details">
-          <p><strong>Code :</strong> {{ viewedCategorie?.code }}</p>
-          <p><strong>Désignation :</strong> {{ viewedCategorie?.designation }}</p>
-          <p><strong>Description :</strong> {{ viewedCategorie?.description }}</p>
-          <p><strong>Statut :</strong> <span [ngClass]="viewedCategorie?.statut === 'Actif' ? 'active' : 'inactive'">{{ viewedCategorie?.statut }}</span></p>
+          <p><strong>Code :</strong> {{ viewedCategorie?.codeCateg }}</p>
+          <p><strong>Désignation :</strong> {{ viewedCategorie?.designationCateg }}</p>
         </div>
         <div class="modal-actions">
           <button class="close-btn" (click)="closeViewModal()">Fermer</button>
@@ -137,7 +109,7 @@
     <div class="modal" *ngIf="showDeleteConfirm" @modalAnimation>
       <div class="modal-content">
         <h2 class="modal-title">Confirmer la suppression</h2>
-        <p class="modal-text">Êtes-vous sûr de vouloir supprimer la catégorie {{ categorieToDelete?.designation }} ?</p>
+        <p class="modal-text">Êtes-vous sûr de vouloir supprimer la catégorie {{ categorieToDelete?.designationCateg }} ?</p>
         <div class="modal-actions">
           <button class="cancel-btn" (click)="cancelDelete()">Annuler</button>
           <button class="delete-btn" (click)="supprimerCategorie()">Supprimer</button>

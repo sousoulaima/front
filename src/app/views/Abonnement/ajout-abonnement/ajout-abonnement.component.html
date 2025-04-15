@@ -1,101 +1,187 @@
 <div class="ajout-abonnement-container">
-    <div class="ajout-abonnement">
-      <!-- Header Section -->
-      <div class="header">
-        <div class="header-title">
-          <h1 class="text-blue-800 animate-fade-in">Ajouter un Abonnement</h1>
-          <p class="text-gray-600 animate-fade-in">Créer un nouvel abonnement pour un adhérent</p>
-        </div>
+  <div class="ajout-abonnement">
+    <!-- Header Section -->
+    <div class="header">
+      <div class="header-title">
+        <h1 class="text-blue-800 animate-fade-in">Ajouter un Abonnement</h1>
+        <p class="text-gray-600 animate-fade-in">Créer un nouvel abonnement pour un adhérent</p>
       </div>
-  
-      <!-- Form Section -->
-      <form (ngSubmit)="saveAbonnement()" #abonnementForm="ngForm" class="form-container">
-        <div class="form-group">
-          <label>Adhérent</label>
-          <input
-            type="text"
-            [(ngModel)]="newAbonnement.adherent"
-            name="adherent"
-            required
-            #adherent="ngModel"
-            class="form-input"
-            placeholder="Nom de l'adhérent"
-          />
-          <span class="error" *ngIf="adherent.invalid && adherent.touched">L'adhérent est requis</span>
-        </div>
-        <div class="form-group">
-          <label>Date de début</label>
-          <input
-            type="date"
-            [(ngModel)]="newAbonnement.dateDebut"
-            name="dateDebut"
-            required
-            #dateDebut="ngModel"
-            class="form-input"
-            (change)="updateMontant()"
-          />
-          <span class="error" *ngIf="dateDebut.invalid && dateDebut.touched">La date de début est requise</span>
-        </div>
-        <div class="form-group">
-          <label>Date de fin</label>
-          <input
-            type="date"
-            [(ngModel)]="newAbonnement.dateFin"
-            name="dateFin"
-            readonly
-            #dateFin="ngModel"
-            class="form-input"
-          />
-        </div>
-        <div class="form-group">
-          <label>Type d'abonnement</label>
-          <select
-            [(ngModel)]="newAbonnement.type"
-            name="type"
-            required
-            #type="ngModel"
-            class="form-input"
-            (change)="updateMontant()"
-          >
-            <option value="" disabled>Sélectionner un type</option>
-            <option value="Mensuel Standard">Mensuel Standard</option>
-            <option value="Mensuel Premium">Mensuel Premium</option>
-            <option value="Trimestriel Premium">Trimestriel Premium</option>
-            <option value="Annuel Standard">Annuel Standard</option>
-          </select>
-          <span class="error" *ngIf="type.invalid && type.touched">Le type est requis</span>
-        </div>
-        <div class="form-group">
-          <label>Montant (DT)</label>
-          <input
-            type="number"
-            [(ngModel)]="newAbonnement.montant"
-            name="montant"
-            readonly
-            #montant="ngModel"
-            class="form-input"
-          />
-        </div>
-        <div class="form-group">
-          <label>Mode de paiement</label>
-          <select
-            [(ngModel)]="newAbonnement.paiement"
-            name="paiement"
-            required
-            #paiement="ngModel"
-            class="form-input"
-          >
-            <option value="" disabled>Sélectionner un mode</option>
-            <option value="Payé">Payé</option>
-            <option value="Non payé">Non payé</option>
-            <option value="Partiel">Partiel</option>
-          </select>
-          <span class="error" *ngIf="paiement.invalid && paiement.touched">Le mode de paiement est requis</span>
-        </div>
-        <div class="form-actions">
-          <button type="button" class="cancel-btn" (click)="goBack()">Retour à la gestion des abonnements</button>
-          <button type="submit" class="save-btn" [disabled]="!abonnementForm.valid">Enregistrer</button>
-        </div>
-      </form>
     </div>
+
+    <!-- Form Section -->
+    <form (ngSubmit)="saveAbonnement()" #abonnementForm="ngForm" class="form-container">
+      <div class="form-group">
+        <label>Code</label>
+        <input
+          type="text"
+          [(ngModel)]="newAbonnement.codeAbo"
+          name="codeAbo"
+          required
+          readonly
+          #codeAbo="ngModel"
+          class="form-input"
+        />
+        <span class="error" *ngIf="codeAbo.invalid && codeAbo.touched">Le code est requis</span>
+      </div>
+      <div class="form-group">
+        <label>Date d'Abonnement</label>
+        <input
+          type="date"
+          [(ngModel)]="newAbonnement.dateAbo"
+          name="dateAbo"
+          required
+          #dateAbo="ngModel"
+          class="form-input"
+        />
+        <span class="error" *ngIf="dateAbo.invalid && dateAbo.touched">La date d'abonnement est requise</span>
+      </div>
+      <div class="form-group">
+        <label>Adhérent</label>
+        <input
+          type="text"
+          [(ngModel)]="newAbonnement.adherentName"
+          name="adherentName"
+          required
+          #adherentName="ngModel"
+          class="form-input"
+          placeholder="Nom de l'adhérent"
+        />
+        <span class="error" *ngIf="adherentName.invalid && adherentName.touched">L'adhérent est requis</span>
+      </div>
+      <div class="form-group">
+        <label>Type d'Abonnement</label>
+        <select
+          [(ngModel)]="newAbonnement.typeDesignation"
+          name="typeDesignation"
+          required
+          #typeDesignation="ngModel"
+          class="form-input"
+          (change)="updateMontant()"
+        >
+          <option value="" disabled>Sélectionner un type</option>
+          <option value="Mensuel Standard">Mensuel Standard</option>
+          <option value="Mensuel Premium">Mensuel Premium</option>
+          <option value="Trimestriel Premium">Trimestriel Premium</option>
+          <option value="Annuel Standard">Annuel Standard</option>
+        </select>
+        <span class="error" *ngIf="typeDesignation.invalid && typeDesignation.touched">Le type est requis</span>
+      </div>
+      <div class="form-group">
+        <label>Date de Début</label>
+        <input
+          type="date"
+          [(ngModel)]="newAbonnement.dateDeb"
+          name="dateDeb"
+          required
+          #dateDeb="ngModel"
+          class="form-input"
+          (change)="updateMontant()"
+        />
+        <span class="error" *ngIf="dateDeb.invalid && dateDeb.touched">La date de début est requise</span>
+      </div>
+      <div class="form-group">
+        <label>Date de Fin</label>
+        <input
+          type="date"
+          [(ngModel)]="newAbonnement.dateFin"
+          name="dateFin"
+          readonly
+          #dateFin="ngModel"
+          class="form-input"
+        />
+      </div>
+      <div class="form-group">
+        <label>Total HT (DT)</label>
+        <input
+          type="number"
+          [(ngModel)]="newAbonnement.totalHTAbo"
+          name="totalHTAbo"
+          readonly
+          #totalHTAbo="ngModel"
+          class="form-input"
+        />
+      </div>
+      <div class="form-group">
+        <label>Remise (DT)</label>
+        <input
+          type="number"
+          [(ngModel)]="newAbonnement.totalRemise"
+          name="totalRemise"
+          readonly
+          #totalRemise="ngModel"
+          class="form-input"
+        />
+      </div>
+      <div class="form-group">
+        <label>Total HT Net (DT)</label>
+        <input
+          type="number"
+          [(ngModel)]="newAbonnement.totalHTNC"
+          name="totalHTNC"
+          readonly
+          #totalHTNC="ngModel"
+          class="form-input"
+        />
+      </div>
+      <div class="form-group">
+        <label>Total TTC (DT)</label>
+        <input
+          type="number"
+          [(ngModel)]="newAbonnement.totalTTC"
+          name="totalTTC"
+          readonly
+          #totalTTC="ngModel"
+          class="form-input"
+        />
+      </div>
+      <div class="form-group">
+        <label>Solde Réglé</label>
+        <select
+          [(ngModel)]="newAbonnement.solde_boclean"
+          name="solde_boclean"
+          required
+          #solde_boclean="ngModel"
+          class="form-input"
+        >
+          <option [value]="true">Oui</option>
+          <option [value]="false">Non</option>
+        </select>
+        <span class="error" *ngIf="solde_boclean.invalid && solde_boclean.touched">Le solde réglé est requis</span>
+      </div>
+      <div class="form-group">
+        <label>Reste à Payer (DT)</label>
+        <input
+          type="number"
+          [(ngModel)]="newAbonnement.resteapayee"
+          name="resteapayee"
+          required
+          min="0"
+          step="0.01"
+          #resteapayee="ngModel"
+          class="form-input"
+        />
+        <span class="error" *ngIf="resteapayee.invalid && resteapayee.touched">Le reste à payer doit être ≥ 0</span>
+      </div>
+      <div class="form-group">
+        <label>Mode de Paiement</label>
+        <select
+          [(ngModel)]="newAbonnement.miPaye"
+          name="miPaye"
+          required
+          #miPaye="ngModel"
+          class="form-input"
+        >
+          <option value="" disabled>Sélectionner un mode</option>
+          <option value="Espèces">Espèces</option>
+          <option value="Carte">Carte</option>
+          <option value="Chèque">Chèque</option>
+        </select>
+        <span class="error" *ngIf="miPaye.invalid && miPaye.touched">Le mode de paiement est requis</span>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="cancel-btn" (click)="goBack()">Retour à la gestion des abonnements</button>
+        <button type="submit" class="save-btn" [disabled]="!abonnementForm.valid">Enregistrer</button>
+      </div>
+    </form>
   </div>
+</div>

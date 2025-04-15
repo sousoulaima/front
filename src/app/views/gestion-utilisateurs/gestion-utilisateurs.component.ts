@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { UserService } from '../../services/user.service';
 import { User } from '../../services/auth.service';
-import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({
@@ -16,11 +15,11 @@ import { Router } from '@angular/router';
   animations: [
     trigger('modalAnimation', [
       transition(':enter', [
-        style({ opacity: 0, transform: 'scale(0.8)' }),
+        style({ opacity: 0, transform: 'scale(0.9)' }),
         animate('300ms ease-out', style({ opacity: 1, transform: 'scale(1)' })),
       ]),
       transition(':leave', [
-        animate('200ms ease-in', style({ opacity: 0, transform: 'scale(0.8)' })),
+        animate('200ms ease-in', style({ opacity: 0, transform: 'scale(0.9)' })),
       ]),
     ]),
   ],
@@ -124,7 +123,7 @@ export class GestionUtilisateursComponent implements OnInit {
           if (error.message === 'Session expirée. Veuillez vous reconnecter.') {
             this.router.navigate(['/login']);
           } else {
-            this.errorMessage = 'Erreur lors de la mise à jour de l’utilisateur : ' + (error.message || 'Veuillez réessayer');
+            this.errorMessage = 'Erreur lors de la mise à jour de l’utilisateur';
           }
           this.cdr.detectChanges();
         },
@@ -148,7 +147,7 @@ export class GestionUtilisateursComponent implements OnInit {
           } else if (error.message === 'Email déjà utilisé ou données invalides') {
             this.errorMessage = 'Erreur : Email déjà utilisé ou données invalides';
           } else {
-            this.errorMessage = 'Erreur lors de l’ajout de l’utilisateur : ' + (error.message || 'Veuillez réessayer');
+            this.errorMessage = 'Erreur lors de l’ajout de l’utilisateur';
           }
           this.cdr.detectChanges();
         },
@@ -204,10 +203,10 @@ export class GestionUtilisateursComponent implements OnInit {
     switch (role) {
       case 'Administrateur':
         return 'role-admin';
-      case 'Gestionnaire':
-        return 'role-manager';
-      case 'Reception':
-        return 'role-reception';
+      case 'Adhérent':
+        return 'role-adherent';
+      case 'Agent d\'accueil':
+        return 'role-agent';
       case 'Formateur':
         return 'role-trainer';
       default:

@@ -4,12 +4,13 @@ import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 interface Salle {
-  code: string;
-  designation: string;
-  capacite: number;
-  prixHeure: number;
-  prixJour: number;
-  statut: 'Disponible' | 'Réservée' | 'Maintenance';
+  codeSalle: string;
+  designationSalle: string;
+  capaciteSalle: number;
+  prixHeureSalle: number;
+  prixJourSalle: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 @Component({
@@ -41,7 +42,6 @@ interface Salle {
 })
 export class ListeSalleComponent {
   searchQuery = '';
-  filterStatut = '';
   showFilter = false;
   showModal = false;
   showViewModal = false;
@@ -52,60 +52,67 @@ export class ListeSalleComponent {
 
   salles: Salle[] = [
     {
-      code: 'SALLE-001',
-      designation: 'Salle A - Yoga',
-      capacite: 20,
-      prixHeure: 35,
-      prixJour: 250,
-      statut: 'Disponible',
+      codeSalle: 'SALLE-001',
+      designationSalle: 'Salle A - Yoga',
+      capaciteSalle: 20,
+      prixHeureSalle: 35,
+      prixJourSalle: 250,
+      created_at: '2025-01-01 10:00:00',
+      updated_at: '2025-01-02 15:30:00',
     },
     {
-      code: 'SALLE-002',
-      designation: 'Salle B - Musculation',
-      capacite: 20,
-      prixHeure: 40,
-      prixJour: 280,
-      statut: 'Disponible',
+      codeSalle: 'SALLE-002',
+      designationSalle: 'Salle B - Musculation',
+      capaciteSalle: 20,
+      prixHeureSalle: 40,
+      prixJourSalle: 280,
+      created_at: '2025-02-01 09:00:00',
+      updated_at: '2025-02-03 14:20:00',
     },
     {
-      code: 'SALLE-003',
-      designation: 'Salle C - Cardio',
-      capacite: 20,
-      prixHeure: 35,
-      prixJour: 250,
-      statut: 'Disponible',
+      codeSalle: 'SALLE-003',
+      designationSalle: 'Salle C - Cardio',
+      capaciteSalle: 20,
+      prixHeureSalle: 35,
+      prixJourSalle: 250,
+      created_at: '2025-03-01 11:00:00',
+      updated_at: '2025-03-01 11:00:00',
     },
     {
-      code: 'SALLE-004',
-      designation: 'Salle D - Pilates',
-      capacite: 15,
-      prixHeure: 40,
-      prixJour: 280,
-      statut: 'Réservée',
+      codeSalle: 'SALLE-004',
+      designationSalle: 'Salle D - Pilates',
+      capaciteSalle: 15,
+      prixHeureSalle: 40,
+      prixJourSalle: 280,
+      created_at: '2025-04-01 08:30:00',
+      updated_at: '2025-04-02 16:00:00',
     },
     {
-      code: 'SALLE-005',
-      designation: 'Salle E - CrossFit',
-      capacite: 10,
-      prixHeure: 45,
-      prixJour: 300,
-      statut: 'Disponible',
+      codeSalle: 'SALLE-005',
+      designationSalle: 'Salle E - CrossFit',
+      capaciteSalle: 10,
+      prixHeureSalle: 45,
+      prixJourSalle: 300,
+      created_at: '2025-05-01 12:00:00',
+      updated_at: '2025-05-01 12:00:00',
     },
     {
-      code: 'SALLE-006',
-      designation: 'Salle F - Danse',
-      capacite: 25,
-      prixHeure: 38,
-      prixJour: 270,
-      statut: 'Réservée',
+      codeSalle: 'SALLE-006',
+      designationSalle: 'Salle F - Danse',
+      capaciteSalle: 25,
+      prixHeureSalle: 38,
+      prixJourSalle: 270,
+      created_at: '2025-06-01 10:00:00',
+      updated_at: '2025-06-02 13:45:00',
     },
     {
-      code: 'SALLE-007',
-      designation: 'Salle G - Spinning',
-      capacite: 18,
-      prixHeure: 42,
-      prixJour: 290,
-      statut: 'Maintenance',
+      codeSalle: 'SALLE-007',
+      designationSalle: 'Salle G - Spinning',
+      capaciteSalle: 18,
+      prixHeureSalle: 42,
+      prixJourSalle: 290,
+      created_at: '2025-07-01 09:00:00',
+      updated_at: '2025-07-01 09:00:00',
     },
   ];
 
@@ -116,23 +123,21 @@ export class ListeSalleComponent {
 
   resetSalle(): Partial<Salle> {
     return {
-      code: '',
-      designation: '',
-      capacite: 0,
-      prixHeure: 0,
-      prixJour: 0,
-      statut: 'Disponible',
+      codeSalle: '',
+      designationSalle: '',
+      capaciteSalle: 0,
+      prixHeureSalle: 0,
+      prixJourSalle: 0,
     };
   }
 
   filterSalles(): void {
     this.filteredSalles = this.salles.filter((salle) => {
       const query = this.searchQuery.toLowerCase();
-      const matchesSearch =
-        salle.code.toLowerCase().includes(query) ||
-        salle.designation.toLowerCase().includes(query);
-      const matchesStatut = this.filterStatut ? salle.statut === this.filterStatut : true;
-      return matchesSearch && matchesStatut;
+      return (
+        salle.codeSalle.toLowerCase().includes(query) ||
+        salle.designationSalle.toLowerCase().includes(query)
+      );
     });
     this.cdr.detectChanges();
   }
@@ -142,14 +147,10 @@ export class ListeSalleComponent {
     this.cdr.detectChanges();
   }
 
-  getStatutClass(statut: string | undefined): string {
-    return statut || '';
-  }
-
   openAddSalleModal(): void {
     this.isEditing = false;
     this.currentSalle = this.resetSalle();
-    this.currentSalle.code = `SALLE-${(this.salles.length + 1).toString().padStart(3, '0')}`;
+    this.currentSalle.codeSalle = `SALLE-${(this.salles.length + 1).toString().padStart(3, '0')}`;
     this.showModal = true;
     this.cdr.detectChanges();
   }
@@ -168,13 +169,22 @@ export class ListeSalleComponent {
   }
 
   saveSalle(): void {
+    const now = new Date().toISOString().replace('T', ' ').split('.')[0];
     if (this.isEditing) {
-      const index = this.salles.findIndex((s) => s.code === this.currentSalle.code);
+      const index = this.salles.findIndex((s) => s.codeSalle === this.currentSalle.codeSalle);
       if (index !== -1) {
-        this.salles[index] = { ...this.currentSalle } as Salle;
+        this.salles[index] = {
+          ...this.currentSalle,
+          updated_at: now,
+          created_at: this.salles[index].created_at, // Preserve original created_at
+        } as Salle;
       }
     } else {
-      this.salles.push({ ...this.currentSalle } as Salle);
+      this.salles.push({
+        ...this.currentSalle,
+        created_at: now,
+        updated_at: now,
+      } as Salle);
     }
     this.filteredSalles = [...this.salles];
     this.closeModal();
@@ -200,7 +210,7 @@ export class ListeSalleComponent {
 
   deleteSalle(): void {
     if (this.salleToDelete) {
-      this.salles = this.salles.filter((s) => s.code !== this.salleToDelete!.code);
+      this.salles = this.salles.filter((s) => s.codeSalle !== this.salleToDelete!.codeSalle);
       this.filteredSalles = [...this.salles];
       this.cancelDelete();
     }

@@ -4,10 +4,8 @@ import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 interface Categorie {
-  code: string;
-  designation: string;
-  description: string;
-  statut: 'Actif' | 'Inactif';
+  codeCateg: string;
+  designationCateg: string;
 }
 
 @Component({
@@ -30,24 +28,23 @@ interface Categorie {
 })
 export class CategorieAbonnementComponent {
   categories: Categorie[] = [
-    { code: 'CAT-001', designation: 'Standard', description: 'Accès aux équipements de base', statut: 'Actif' },
-    { code: 'CAT-002', designation: 'Premium', description: 'Accès à tous les équipements et services', statut: 'Actif' },
-    { code: 'CAT-003', designation: 'Étudiant', description: 'Tarifs réduits pour les étudiants', statut: 'Actif' },
-    { code: 'CAT-004', designation: 'Senior', description: 'Tarifs adaptés pour les seniors', statut: 'Actif' },
-    { code: 'CAT-005', designation: 'Famille', description: 'Abonnements pour plusieurs membres d’une même famille', statut: 'Actif' },
-    { code: 'CAT-006', designation: 'Entreprise', description: 'Abonnements groupés pour les entreprises', statut: 'Actif' },
-    { code: 'CAT-007', designation: 'VIP', description: 'Services exclusifs et personnalisés', statut: 'Inactif' },
+    { codeCateg: 'CAT-001', designationCateg: 'Standard' },
+    { codeCateg: 'CAT-002', designationCateg: 'Premium' },
+    { codeCateg: 'CAT-003', designationCateg: 'Étudiant' },
+    { codeCateg: 'CAT-004', designationCateg: 'Senior' },
+    { codeCateg: 'CAT-005', designationCateg: 'Famille' },
+    { codeCateg: 'CAT-006', designationCateg: 'Entreprise' },
+    { codeCateg: 'CAT-007', designationCateg: 'VIP' },
   ];
 
   filteredCategories: Categorie[] = [...this.categories];
   searchTerm = '';
-  filterStatut = '';
   showFilterDropdown = false;
   showModal = false;
   showViewModal = false;
   showDeleteConfirm = false;
   isEditMode = false;
-  newCategorie: Partial<Categorie> = { statut: 'Actif' };
+  newCategorie: Partial<Categorie> = {};
   viewedCategorie: Categorie | null = null;
   categorieToDelete: Categorie | null = null;
 
@@ -56,11 +53,9 @@ export class CategorieAbonnementComponent {
   filterCategories(): void {
     this.filteredCategories = this.categories.filter((categorie) => {
       const matchesSearch =
-        categorie.designation.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        categorie.code.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        categorie.description.toLowerCase().includes(this.searchTerm.toLowerCase());
-      const matchesStatut = this.filterStatut ? categorie.statut === this.filterStatut : true;
-      return matchesSearch && matchesStatut;
+        categorie.designationCateg.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        categorie.codeCateg.toLowerCase().includes(this.searchTerm.toLowerCase());
+      return matchesSearch;
     });
     this.cdr.detectChanges();
   }
@@ -70,15 +65,9 @@ export class CategorieAbonnementComponent {
     this.cdr.detectChanges();
   }
 
-  toggleStatut(categorie: Categorie): void {
-    categorie.statut = categorie.statut === 'Actif' ? 'Inactif' : 'Actif';
-    this.filterCategories();
-    this.cdr.detectChanges();
-  }
-
   openAddModal(): void {
     this.isEditMode = false;
-    this.newCategorie = { statut: 'Actif', designation: '', description: '' };
+    this.newCategorie = { designationCateg: '' };
     this.showModal = true;
     this.cdr.detectChanges();
   }
@@ -92,20 +81,20 @@ export class CategorieAbonnementComponent {
 
   closeModal(): void {
     this.showModal = false;
-    this.newCategorie = { statut: 'Actif' };
+    this.newCategorie = {};
     this.cdr.detectChanges();
   }
 
   saveCategorie(): void {
     if (this.isEditMode) {
-      const index = this.categories.findIndex((c) => c.code === (this.newCategorie as Categorie).code);
+      const index = this.categories.findIndex((c) => c.codeCateg === (this.newCategorie as Categorie).codeCateg);
       if (index !== -1) {
         this.categories[index] = { ...this.newCategorie } as Categorie;
       }
     } else {
       const newCategorie: Categorie = {
         ...this.newCategorie,
-        code: `CAT-${String(this.categories.length + 1).padStart(3, '0')}`,
+        codeCateg: `CAT-${String(this.categories.length + 1).padStart(3, '0')}`,
       } as Categorie;
       this.categories.push(newCategorie);
     }
@@ -139,7 +128,7 @@ export class CategorieAbonnementComponent {
 
   supprimerCategorie(): void {
     if (this.categorieToDelete) {
-      this.categories = this.categories.filter((c) => c.code !== this.categorieToDelete!.code);
+      this.categories = this.categories.filter((c) => c.codeCateg !== this.categorieToDelete!.codeCateg);
       this.filteredCategories = [...this.categories];
       this.cancelDelete();
     }

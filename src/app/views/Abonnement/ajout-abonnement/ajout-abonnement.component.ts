@@ -4,14 +4,21 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 interface Abonnement {
-  code: string;
-  adherent: string;
-  dateDebut: string;
+  codeAbo: string;
+  dateAbo: string;
+  totalHTAbo: number;
+  totalRemise: number;
+  totalHTNC: number;
+  totalTTC: number;
+  solde_boclean: boolean;
+  resteapayee: number;
+  miPaye: string;
+  dateDeb: string;
   dateFin: string;
-  type: string;
-  montant: number;
-  paiement?: 'Payé' | 'Non payé' | 'Partiel';
-  statut: 'Actif' | 'Inactif';
+  adherentCode: string;
+  typeAbonnementCode: string;
+  adherentName?: string; // For UI display
+  typeDesignation?: string; // For UI display
 }
 
 @Component({
@@ -23,38 +30,58 @@ interface Abonnement {
 })
 export class AjoutAbonnementComponent {
   newAbonnement: Partial<Abonnement> = {
-    code: `ABO-${(Math.floor(Math.random() * 1000) + 1).toString().padStart(3, '0')}`,
-    adherent: '',
-    dateDebut: new Date().toISOString().split('T')[0],
+    codeAbo: `ABO-${(Math.floor(Math.random() * 1000) + 1).toString().padStart(3, '0')}`,
+    dateAbo: new Date().toISOString().split('T')[0],
+    totalHTAbo: 0,
+    totalRemise: 0,
+    totalHTNC: 0,
+    totalTTC: 0,
+    solde_boclean: false,
+    resteapayee: 0,
+    miPaye: '',
+    dateDeb: new Date().toISOString().split('T')[0],
     dateFin: '',
-    type: '',
-    montant: 0,
-    paiement: undefined,
-    statut: 'Actif',
+    adherentCode: '',
+    typeAbonnementCode: '',
+    adherentName: '',
+    typeDesignation: '',
   };
 
-  typeMontants: { [key: string]: { montant: number; duration: number } } = {
-    'Mensuel Standard': { montant: 39.99, duration: 1 },
-    'Mensuel Premium': { montant: 59.99, duration: 1 },
-    'Trimestriel Premium': { montant: 169.99, duration: 3 },
-    'Annuel Standard': { montant: 499.99, duration: 12 },
+  typeMontants: { [key: string]: { totalTTC: number; duration: number; code: string } } = {
+    'Mensuel Standard': { totalTTC: 39.99, duration: 1, code: 'TYPE-001' },
+    'Mensuel Premium': { totalTTC: 59.99, duration: 1, code: 'TYPE-002' },
+    'Trimestriel Premium': { totalTTC: 169.99, duration: 3, code: 'TYPE-004' },
+    'Annuel Standard': { totalTTC: 499.99, duration: 12, code: 'TYPE-005' },
   };
 
   constructor(private router: Router) {}
 
   updateMontant(): void {
-    const typeInfo = this.typeMontants[this.newAbonnement.type || ''];
-    this.newAbonnement.montant = typeInfo ? typeInfo.montant : 0;
-    this.calculateDateFin();
+    const typeInfo = this.typeMontants[this.newAbonnement.typeDesignation || ''];
+    if (typeInfo) {
+      const taxRate = 0.19; // Assuming 19% tax
+      this.newAbonnement.totalTTC = typeInfo.totalTTC;
+      this.newAbonnement.totalHTAbo = typeInfo.totalTTC / (1 + taxRate);
+      this.newAbonnement.totalRemise = 0; // Default to 0 for new subscription
+      this.newAbonnement.totalHTNC = this.newAbonnement.totalHTAbo;
+      this.newAbonnement.typeAbonnementCode = typeInfo.code;
+      this.calculateDateFin();
+    } else {
+      this.newAbonnement.totalTTC = 0;
+      this.newAbonnement.totalHTAbo = 0;
+      this.newAbonnement.totalRemise = 0;
+      this.newAbonnement.totalHTNC = 0;
+      this.newAbonnement.dateFin = '';
+    }
   }
 
   calculateDateFin(): void {
-    if (!this.newAbonnement.dateDebut || !this.newAbonnement.type) {
+    if (!this.newAbonnement.dateDeb || !this.newAbonnement.typeDesignation) {
       this.newAbonnement.dateFin = '';
       return;
     }
-    const startDate = new Date(this.newAbonnement.dateDebut);
-    const typeInfo = this.typeMontants[this.newAbonnement.type];
+    const startDate = new Date(this.newAbonnement.dateDeb);
+    const typeInfo = this.typeMontants[this.newAbonnement.typeDesignation];
     if (!typeInfo) return;
     const endDate = new Date(startDate);
     endDate.setMonth(startDate.getMonth() + typeInfo.duration);
@@ -62,6 +89,7 @@ export class AjoutAbonnementComponent {
   }
 
   saveAbonnement(): void {
+    // In a real app, map adherentName to adherentCode and typeDesignation to typeAbonnementCode
     console.log('Abonnement saved:', this.newAbonnement);
     this.router.navigate(['/liste-abonnement']);
   }

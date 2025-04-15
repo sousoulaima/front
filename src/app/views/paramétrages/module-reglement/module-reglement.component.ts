@@ -4,12 +4,23 @@ import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 interface Payment {
-  code: string;
-  date: string;
-  mode: 'Carte bancaire' | 'Virement' | 'Espèces' | 'Chèque';
-  amount: number;
-  status: 'Réussi' | 'En cours' | 'Echoué' | 'En attente';
-  comment: string;
+  codeReg: string;
+  dateReg: string;
+  mtrReg: number;
+  numChq: string | null;
+  numTraite: string | null;
+  commentaire: string | null;
+  abonnementCodeAbo: string;
+  modaliteRegCodeMod: string;
+}
+
+interface Abonnement {
+  codeAbo: string;
+}
+
+interface ModaliteReg {
+  codeMod: string;
+  designationMod: string;
 }
 
 @Component({
@@ -32,19 +43,35 @@ interface Payment {
 })
 export class ModuleReglementComponent {
   payments: Payment[] = [
-    { code: 'REG-001', date: '2025-04-05', mode: 'Carte bancaire', amount: 59.99, status: 'Réussi', comment: 'Paiement mensuel' },
-    { code: 'REG-002', date: '2025-04-01', mode: 'Virement', amount: 499.99, status: 'Réussi', comment: 'Abonnement annuel' },
-    { code: 'REG-003', date: '2025-04-01', mode: 'Espèces', amount: 39.99, status: 'Réussi', comment: 'Paiement mensuel' },
-    { code: 'REG-004', date: '2025-03-01', mode: 'Chèque', amount: 99.99, status: 'En cours', comment: 'Premier versement trimestriel' },
-    { code: 'REG-005', date: '2025-03-25', mode: 'Carte bancaire', amount: 39.99, status: 'Réussi', comment: 'Paiement mensuel' },
-    { code: 'REG-006', date: '2025-03-15', mode: 'Virement', amount: 39.99, status: 'Echoué', comment: 'Paiement mensuel' },
-    { code: 'REG-007', date: '2025-03-10', mode: 'Carte bancaire', amount: 59.99, status: 'En attente', comment: 'Paiement mensuel' },
+    { codeReg: 'REG-001', dateReg: '2025-04-05', mtrReg: 59.99, numChq: null, numTraite: null, commentaire: 'Paiement mensuel', abonnementCodeAbo: 'ABO-001', modaliteRegCodeMod: 'MOD-001' },
+    { codeReg: 'REG-002', dateReg: '2025-04-01', mtrReg: 499.99, numChq: null, numTraite: 'TRAITE-001', commentaire: 'Abonnement annuel', abonnementCodeAbo: 'ABO-002', modaliteRegCodeMod: 'MOD-002' },
+    { codeReg: 'REG-003', dateReg: '2025-04-01', mtrReg: 39.99, numChq: null, numTraite: null, commentaire: 'Paiement mensuel', abonnementCodeAbo: 'ABO-003', modaliteRegCodeMod: 'MOD-003' },
+    { codeReg: 'REG-004', dateReg: '2025-03-01', mtrReg: 99.99, numChq: 'CHQ-001', numTraite: null, commentaire: 'Premier versement trimestriel', abonnementCodeAbo: 'ABO-004', modaliteRegCodeMod: 'MOD-004' },
+    { codeReg: 'REG-005', dateReg: '2025-03-25', mtrReg: 39.99, numChq: null, numTraite: null, commentaire: 'Paiement mensuel', abonnementCodeAbo: 'ABO-005', modaliteRegCodeMod: 'MOD-001' },
+    { codeReg: 'REG-006', dateReg: '2025-03-15', mtrReg: 39.99, numChq: null, numTraite: 'TRAITE-002', commentaire: 'Paiement mensuel', abonnementCodeAbo: 'ABO-006', modaliteRegCodeMod: 'MOD-002' },
+    { codeReg: 'REG-007', dateReg: '2025-03-10', mtrReg: 59.99, numChq: null, numTraite: null, commentaire: 'Paiement mensuel', abonnementCodeAbo: 'ABO-007', modaliteRegCodeMod: 'MOD-001' },
+  ];
+
+  abonnements: Abonnement[] = [
+    { codeAbo: 'ABO-001' },
+    { codeAbo: 'ABO-002' },
+    { codeAbo: 'ABO-003' },
+    { codeAbo: 'ABO-004' },
+    { codeAbo: 'ABO-005' },
+    { codeAbo: 'ABO-006' },
+    { codeAbo: 'ABO-007' },
+  ];
+
+  modaliteRegs: ModaliteReg[] = [
+    { codeMod: 'MOD-001', designationMod: 'Carte bancaire' },
+    { codeMod: 'MOD-002', designationMod: 'Virement' },
+    { codeMod: 'MOD-003', designationMod: 'Espèces' },
+    { codeMod: 'MOD-004', designationMod: 'Chèque' },
   ];
 
   filteredPayments: Payment[] = [...this.payments];
   searchQuery = '';
   filterMode = '';
-  filterStatus = '';
   showFilter = false;
   showModal = false;
   showViewModal = false;
@@ -59,13 +86,12 @@ export class ModuleReglementComponent {
   filterPayments(): void {
     this.filteredPayments = this.payments.filter((payment) => {
       const matchesSearch =
-        payment.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        payment.date.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        payment.mode.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        (payment.comment && payment.comment.toLowerCase().includes(this.searchQuery.toLowerCase()));
-      const matchesMode = this.filterMode ? payment.mode === this.filterMode : true;
-      const matchesStatus = this.filterStatus ? payment.status === this.filterStatus : true;
-      return matchesSearch && matchesMode && matchesStatus;
+        payment.codeReg.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        payment.dateReg.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        this.getModaliteRegDesignation(payment.modaliteRegCodeMod).toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        (payment.commentaire && payment.commentaire.toLowerCase().includes(this.searchQuery.toLowerCase()));
+      const matchesMode = this.filterMode ? payment.modaliteRegCodeMod === this.filterMode : true;
+      return matchesSearch && matchesMode;
     });
     this.cdr.detectChanges();
   }
@@ -75,30 +101,22 @@ export class ModuleReglementComponent {
     this.cdr.detectChanges();
   }
 
-  getStatusClass(status: string | undefined): string {
-    switch (status) {
-      case 'Réussi':
-        return 'Réussi';
-      case 'En cours':
-        return 'En-cours';
-      case 'Echoué':
-        return 'Echoué';
-      case 'En attente':
-        return 'En-attente';
-      default:
-        return '';
-    }
+  getModaliteRegDesignation(codeMod: string): string {
+    const modalite = this.modaliteRegs.find((m) => m.codeMod === codeMod);
+    return modalite ? modalite.designationMod : 'Inconnu';
   }
 
   openAddPaymentModal(): void {
     this.isEditing = false;
     this.currentPayment = {
-      code: `REG-${(this.payments.length + 1).toString().padStart(3, '0')}`,
-      date: new Date().toISOString().split('T')[0],
-      mode: 'Carte bancaire',
-      amount: 0,
-      status: 'Réussi',
-      comment: '',
+      codeReg: `REG-${(this.payments.length + 1).toString().padStart(3, '0')}`,
+      dateReg: new Date().toISOString().split('T')[0],
+      mtrReg: 0,
+      numChq: null,
+      numTraite: null,
+      commentaire: '',
+      abonnementCodeAbo: this.abonnements[0]?.codeAbo || '',
+      modaliteRegCodeMod: this.modaliteRegs[0]?.codeMod || '',
     };
     this.showModal = true;
     this.cdr.detectChanges();
@@ -119,7 +137,7 @@ export class ModuleReglementComponent {
 
   savePayment(): void {
     if (this.isEditing) {
-      const index = this.payments.findIndex((p) => p.code === (this.currentPayment as Payment).code);
+      const index = this.payments.findIndex((p) => p.codeReg === (this.currentPayment as Payment).codeReg);
       if (index !== -1) {
         this.payments[index] = { ...this.currentPayment } as Payment;
       }
@@ -156,7 +174,7 @@ export class ModuleReglementComponent {
 
   deletePayment(): void {
     if (this.paymentToDelete) {
-      this.payments = this.payments.filter((p) => p.code !== this.paymentToDelete!.code);
+      this.payments = this.payments.filter((p) => p.codeReg !== this.paymentToDelete!.codeReg);
       this.filteredPayments = [...this.payments];
       this.cancelDelete();
     }

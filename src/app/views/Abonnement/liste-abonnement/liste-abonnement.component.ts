@@ -1,17 +1,24 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { FormsModule } from '@angular/forms'; // Correct import
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 interface Abonnement {
-  code: string;
-  adherent: string;
-  dateDebut: string;
+  codeAbo: string;
+  dateAbo: string;
+  totalHTAbo: number;
+  totalRemise: number;
+  totalHTNC: number;
+  totalTTC: number;
+  solde_boclean: boolean;
+  resteapayee: number;
+  miPaye: string;
+  dateDeb: string;
   dateFin: string;
-  type: string;
-  montant: number;
-  paiement?: 'Payé' | 'Non payé' | 'Partiel';
-  statut: 'Actif' | 'Inactif';
+  adherentCode: string;
+  typeAbonnementCode: string;
+  adherentName?: string; // For UI display
+  typeDesignation?: string; // For UI display
 }
 
 @Component({
@@ -44,52 +51,79 @@ interface Abonnement {
 export class ListeAbonnementComponent {
   abonnements: Abonnement[] = [
     {
-      code: 'ABO-001',
-      adherent: 'Dupont Martin',
-      dateDebut: '2025-01-01',
+      codeAbo: 'ABO-001',
+      dateAbo: '2025-01-01',
+      totalHTAbo: 33.61, // Example: 39.99 / 1.19 (assuming 19% tax)
+      totalRemise: 0,
+      totalHTNC: 33.61,
+      totalTTC: 39.99,
+      solde_boclean: true,
+      resteapayee: 0,
+      miPaye: 'Espèces',
+      dateDeb: '2025-01-01',
       dateFin: '2025-02-01',
-      type: 'Mensuel Standard',
-      montant: 39.99,
-      paiement: 'Payé',
-      statut: 'Actif',
+      adherentCode: 'ADH-001',
+      typeAbonnementCode: 'TYPE-001',
+      adherentName: 'Dupont Martin',
+      typeDesignation: 'Mensuel Standard',
     },
     {
-      code: 'ABO-002',
-      adherent: 'Laurent Sophie',
-      dateDebut: '2025-02-01',
+      codeAbo: 'ABO-002',
+      dateAbo: '2025-02-01',
+      totalHTAbo: 50.41, // Example: 59.99 / 1.19
+      totalRemise: 0,
+      totalHTNC: 50.41,
+      totalTTC: 59.99,
+      solde_boclean: false,
+      resteapayee: 59.99,
+      miPaye: 'Carte',
+      dateDeb: '2025-02-01',
       dateFin: '2025-03-01',
-      type: 'Mensuel Premium',
-      montant: 59.99,
-      paiement: 'Non payé',
-      statut: 'Actif',
+      adherentCode: 'ADH-002',
+      typeAbonnementCode: 'TYPE-002',
+      adherentName: 'Laurent Sophie',
+      typeDesignation: 'Mensuel Premium',
     },
     {
-      code: 'ABO-003',
-      adherent: 'Dubois Lucas',
-      dateDebut: '2025-01-15',
+      codeAbo: 'ABO-003',
+      dateAbo: '2025-01-15',
+      totalHTAbo: 420.16, // Example: 499.99 / 1.19
+      totalRemise: 50,
+      totalHTNC: 370.16,
+      totalTTC: 440.49, // 370.16 * 1.19
+      solde_boclean: false,
+      resteapayee: 220.25, // Example: half paid
+      miPaye: 'Chèque',
+      dateDeb: '2025-01-15',
       dateFin: '2026-01-15',
-      type: 'Annuel Standard',
-      montant: 499.99,
-      paiement: 'Partiel',
-      statut: 'Inactif',
+      adherentCode: 'ADH-003',
+      typeAbonnementCode: 'TYPE-005',
+      adherentName: 'Dubois Lucas',
+      typeDesignation: 'Annuel Standard',
     },
     {
-      code: 'ABO-004',
-      adherent: 'Bernard Emma',
-      dateDebut: '2025-03-01',
+      codeAbo: 'ABO-004',
+      dateAbo: '2025-03-01',
+      totalHTAbo: 142.85, // Example: 169.99 / 1.19
+      totalRemise: 0,
+      totalHTNC: 142.85,
+      totalTTC: 169.99,
+      solde_boclean: true,
+      resteapayee: 0,
+      miPaye: 'Espèces',
+      dateDeb: '2025-03-01',
       dateFin: '2025-06-01',
-      type: 'Trimestriel Premium',
-      montant: 169.99,
-      paiement: 'Payé',
-      statut: 'Actif',
+      adherentCode: 'ADH-004',
+      typeAbonnementCode: 'TYPE-004',
+      adherentName: 'Bernard Emma',
+      typeDesignation: 'Trimestriel Premium',
     },
   ];
 
   filteredAbonnements: Abonnement[] = [...this.abonnements];
   searchQuery = '';
   filterType = '';
-  filterStatut = '';
-  filterPaiement = '';
+  filterMiPaye = '';
   showFilter = false;
   showModal = false;
   showViewModal = false;
@@ -104,15 +138,15 @@ export class ListeAbonnementComponent {
   filterAbonnements(): void {
     this.filteredAbonnements = this.abonnements.filter((abonnement) => {
       const matchesSearch =
-        abonnement.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        abonnement.adherent.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        abonnement.dateDebut.includes(this.searchQuery) ||
-        abonnement.dateFin.includes(this.searchQuery) ||
-        abonnement.type.toLowerCase().includes(this.searchQuery.toLowerCase());
-      const matchesType = this.filterType ? abonnement.type === this.filterType : true;
-      const matchesStatut = this.filterStatut ? abonnement.statut === this.filterStatut : true;
-      const matchesPaiement = this.filterPaiement ? abonnement.paiement === this.filterPaiement : true;
-      return matchesSearch && matchesType && matchesStatut && matchesPaiement;
+        (abonnement.codeAbo?.toLowerCase().includes(this.searchQuery.toLowerCase()) || '') ||
+        (abonnement.adherentName?.toLowerCase().includes(this.searchQuery.toLowerCase()) || '') ||
+        (abonnement.dateAbo?.includes(this.searchQuery) || '') ||
+        (abonnement.dateDeb?.includes(this.searchQuery) || '') ||
+        (abonnement.dateFin?.includes(this.searchQuery) || '') ||
+        (abonnement.typeDesignation?.toLowerCase().includes(this.searchQuery.toLowerCase()) || '');
+      const matchesType = this.filterType ? abonnement.typeDesignation === this.filterType : true;
+      const matchesMiPaye = this.filterMiPaye ? abonnement.miPaye === this.filterMiPaye : true;
+      return matchesSearch && matchesType && matchesMiPaye;
     });
     this.cdr.detectChanges();
   }
@@ -122,13 +156,8 @@ export class ListeAbonnementComponent {
     this.cdr.detectChanges();
   }
 
-  getPaiementClass(paiement: string | undefined): string {
-    if (!paiement) return '';
-    return paiement.replace(' ', '-');
-  }
-
-  getStatutClass(statut: string | undefined): string {
-    return statut || '';
+  getMiPayeClass(miPaye: string | undefined): string {
+    return miPaye || '';
   }
 
   openEditAbonnementModal(abonnement: Abonnement): void {
@@ -146,7 +175,7 @@ export class ListeAbonnementComponent {
 
   saveAbonnement(): void {
     if (this.isEditing) {
-      const index = this.abonnements.findIndex((a) => a.code === (this.currentAbonnement as Abonnement).code);
+      const index = this.abonnements.findIndex((a) => a.codeAbo === (this.currentAbonnement as Abonnement).codeAbo);
       if (index !== -1) {
         this.abonnements[index] = { ...this.currentAbonnement } as Abonnement;
       }
@@ -181,7 +210,7 @@ export class ListeAbonnementComponent {
 
   deleteAbonnement(): void {
     if (this.abonnementToDelete) {
-      this.abonnements = this.abonnements.filter((a) => a.code !== this.abonnementToDelete!.code);
+      this.abonnements = this.abonnements.filter((a) => a.codeAbo !== this.abonnementToDelete!.codeAbo);
       this.filteredAbonnements = [...this.abonnements];
       this.cancelDelete();
     }

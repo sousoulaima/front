@@ -6,11 +6,11 @@ import { trigger, transition, style, animate } from '@angular/animations';
 interface Subscription {
   code: string;
   designation: string;
-  duration: number;
-  price: number;
-  freeAccess: boolean;
-  weeklySessions: number;
-  status: 'Actif' | 'Inactif';
+  nbMois: number;
+  nbJours: number;
+  accesLibre: boolean;
+  forfait: number;
+  nbSeanceSemaine: number;
 }
 
 @Component({
@@ -33,19 +33,18 @@ interface Subscription {
 })
 export class TypesAbonnementComponent {
   subscriptions: Subscription[] = [
-    { code: 'TYPE-001', designation: 'Mensuel Standard', duration: 1, price: 39.99, freeAccess: true, weeklySessions: 3, status: 'Actif' },
-    { code: 'TYPE-002', designation: 'Mensuel Premium', duration: 1, price: 59.99, freeAccess: true, weeklySessions: -1, status: 'Actif' },
-    { code: 'TYPE-003', designation: 'Trimestriel Standard', duration: 3, price: 109.99, freeAccess: true, weeklySessions: 3, status: 'Actif' },
-    { code: 'TYPE-004', designation: 'Trimestriel Premium', duration: 3, price: 169.99, freeAccess: true, weeklySessions: -1, status: 'Actif' },
-    { code: 'TYPE-005', designation: 'Annuel Standard', duration: 12, price: 399.99, freeAccess: true, weeklySessions: 3, status: 'Actif' },
-    { code: 'TYPE-006', designation: 'Annuel Premium', duration: 12, price: 599.99, freeAccess: true, weeklySessions: -1, status: 'Actif' },
-    { code: 'TYPE-007', designation: 'Pass Journée', duration: 0, price: 15.99, freeAccess: true, weeklySessions: 1, status: 'Inactif' },
+    { code: 'TYPE-001', designation: 'Mensuel Standard', nbMois: 1, nbJours: 30, accesLibre: true, forfait: 39.99, nbSeanceSemaine: 3 },
+    { code: 'TYPE-002', designation: 'Mensuel Premium', nbMois: 1, nbJours: 30, accesLibre: true, forfait: 59.99, nbSeanceSemaine: -1 },
+    { code: 'TYPE-003', designation: 'Trimestriel Standard', nbMois: 3, nbJours: 90, accesLibre: true, forfait: 109.99, nbSeanceSemaine: 3 },
+    { code: 'TYPE-004', designation: 'Trimestriel Premium', nbMois: 3, nbJours: 90, accesLibre: true, forfait: 169.99, nbSeanceSemaine: -1 },
+    { code: 'TYPE-005', designation: 'Annuel Standard', nbMois: 12, nbJours: 365, accesLibre: true, forfait: 399.99, nbSeanceSemaine: 3 },
+    { code: 'TYPE-006', designation: 'Annuel Premium', nbMois: 12, nbJours: 365, accesLibre: true, forfait: 599.99, nbSeanceSemaine: -1 },
+    { code: 'TYPE-007', designation: 'Pass Journée', nbMois: 0, nbJours: 1, accesLibre: true, forfait: 15.99, nbSeanceSemaine: 1 },
   ];
 
   filteredSubscriptions: Subscription[] = [...this.subscriptions];
   searchQuery = '';
   filterDuration = '';
-  filterStatus = '';
   showFilter = false;
   showModal = false;
   showViewModal = false;
@@ -62,9 +61,8 @@ export class TypesAbonnementComponent {
       const matchesSearch =
         subscription.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         subscription.designation.toLowerCase().includes(this.searchQuery.toLowerCase());
-      const matchesDuration = this.filterDuration ? subscription.duration.toString() === this.filterDuration : true;
-      const matchesStatus = this.filterStatus ? subscription.status === this.filterStatus : true;
-      return matchesSearch && matchesDuration && matchesStatus;
+      const matchesDuration = this.filterDuration ? subscription.nbMois.toString() === this.filterDuration : true;
+      return matchesSearch && matchesDuration;
     });
     this.cdr.detectChanges();
   }
@@ -74,22 +72,16 @@ export class TypesAbonnementComponent {
     this.cdr.detectChanges();
   }
 
-  toggleStatus(subscription: Subscription): void {
-    subscription.status = subscription.status === 'Actif' ? 'Inactif' : 'Actif';
-    this.filterSubscriptions();
-    this.cdr.detectChanges();
-  }
-
   openAddSubscriptionModal(): void {
     this.isEditing = false;
     this.currentSubscription = {
       code: `TYPE-${(this.subscriptions.length + 1).toString().padStart(3, '0')}`,
       designation: '',
-      duration: 0,
-      price: 0,
-      freeAccess: true,
-      weeklySessions: 0,
-      status: 'Actif',
+      nbMois: 0,
+      nbJours: 0,
+      accesLibre: true,
+      forfait: 0,
+      nbSeanceSemaine: 0,
     };
     this.showModal = true;
     this.cdr.detectChanges();

@@ -4,13 +4,14 @@ import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 interface Formateur {
-  code: string;
-  nom: string;
-  prenom: string;
-  email: string;
-  telephone: string;
-  specialite: string;
-  statut: 'Actif' | 'Inactif';
+  codeFor: string;
+  nomFor: string;
+  prenomFor: string;
+  telFor: string;
+  emailFor: string;
+  adrFor: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 @Component({
@@ -42,7 +43,6 @@ interface Formateur {
 })
 export class FormateurComponent {
   searchQuery = '';
-  filterStatut = '';
   showFilter = false;
   showModal = false;
   showViewModal = false;
@@ -53,58 +53,64 @@ export class FormateurComponent {
 
   formateurs: Formateur[] = [
     {
-      code: 'FOR-001',
-      nom: 'Leroy',
-      prenom: 'Marie',
-      email: 'marie.leroy@email.com',
-      telephone: '0612345678',
-      specialite: 'Yoga, Pilates',
-      statut: 'Actif',
+      codeFor: 'FOR-001',
+      nomFor: 'Leroy',
+      prenomFor: 'Marie',
+      telFor: '0612345678',
+      emailFor: 'marie.leroy@email.com',
+      adrFor: '123 Rue de Paris, 75001 Paris',
+      created_at: '2025-01-01 10:00:00',
+      updated_at: '2025-01-02 15:30:00',
     },
     {
-      code: 'FOR-002',
-      nom: 'Girard',
-      prenom: 'Thomas',
-      email: 'thomas.girard@email.com',
-      telephone: '0698765432',
-      specialite: 'Musculation, HIIT',
-      statut: 'Actif',
+      codeFor: 'FOR-002',
+      nomFor: 'Girard',
+      prenomFor: 'Thomas',
+      telFor: '0698765432',
+      emailFor: 'thomas.girard@email.com',
+      adrFor: '456 Avenue des Champs, 75008 Paris',
+      created_at: '2025-02-01 09:00:00',
+      updated_at: '2025-02-03 14:20:00',
     },
     {
-      code: 'FOR-003',
-      nom: 'Petit',
-      prenom: 'Julie',
-      email: 'julie.petit@email.com',
-      telephone: '0654321987',
-      specialite: 'Cardio, HIIT',
-      statut: 'Actif',
+      codeFor: 'FOR-003',
+      nomFor: 'Petit',
+      prenomFor: 'Julie',
+      telFor: '0654321987',
+      emailFor: 'julie.petit@email.com',
+      adrFor: '789 Boulevard St-Germain, 75006 Paris',
+      created_at: '2025-03-01 11:00:00',
+      updated_at: '2025-03-01 11:00:00',
     },
     {
-      code: 'FOR-004',
-      nom: 'Blanc',
-      prenom: 'Sophie',
-      email: 'sophie.blanc@email.com',
-      telephone: '0678901234',
-      specialite: 'Pilates, Stretching',
-      statut: 'Actif',
+      codeFor: 'FOR-004',
+      nomFor: 'Blanc',
+      prenomFor: 'Sophie',
+      telFor: '0678901234',
+      emailFor: 'sophie.blanc@email.com',
+      adrFor: '321 Rue de Lyon, 69003 Lyon',
+      created_at: '2025-04-01 08:30:00',
+      updated_at: '2025-04-02 16:00:00',
     },
     {
-      code: 'FOR-005',
-      nom: 'Martin',
-      prenom: 'Lucas',
-      email: 'lucas.martin@email.com',
-      telephone: '0712345678',
-      specialite: 'Boxe, Arts martiaux',
-      statut: 'Inactif',
+      codeFor: 'FOR-005',
+      nomFor: 'Martin',
+      prenomFor: 'Lucas',
+      telFor: '0712345678',
+      emailFor: 'lucas.martin@email.com',
+      adrFor: '654 Avenue de la Mer, 13001 Marseille',
+      created_at: '2025-05-01 12:00:00',
+      updated_at: '2025-05-01 12:00:00',
     },
     {
-      code: 'FOR-006',
-      nom: 'Rousseau',
-      prenom: 'Emma',
-      email: 'emma.rousseau@email.com',
-      telephone: '0687654321',
-      specialite: 'Zumba, Danse',
-      statut: 'Actif',
+      codeFor: 'FOR-006',
+      nomFor: 'Rousseau',
+      prenomFor: 'Emma',
+      telFor: '0687654321',
+      emailFor: 'emma.rousseau@email.com',
+      adrFor: '987 Rue du Nord, 59000 Lille',
+      created_at: '2025-06-01 10:00:00',
+      updated_at: '2025-06-02 13:45:00',
     },
   ];
 
@@ -115,28 +121,26 @@ export class FormateurComponent {
 
   resetFormateur(): Partial<Formateur> {
     return {
-      code: '',
-      nom: '',
-      prenom: '',
-      email: '',
-      telephone: '',
-      specialite: '',
-      statut: 'Actif',
+      codeFor: '',
+      nomFor: '',
+      prenomFor: '',
+      telFor: '',
+      emailFor: '',
+      adrFor: '',
     };
   }
 
   filterFormateurs(): void {
     this.filteredFormateurs = this.formateurs.filter((formateur) => {
       const query = this.searchQuery.toLowerCase();
-      const matchesSearch =
-        formateur.code.toLowerCase().includes(query) ||
-        formateur.nom.toLowerCase().includes(query) ||
-        formateur.prenom.toLowerCase().includes(query) ||
-        formateur.email.toLowerCase().includes(query) ||
-        formateur.telephone.includes(query) ||
-        formateur.specialite.toLowerCase().includes(query);
-      const matchesStatut = this.filterStatut ? formateur.statut === this.filterStatut : true;
-      return matchesSearch && matchesStatut;
+      return (
+        formateur.codeFor.toLowerCase().includes(query) ||
+        formateur.nomFor.toLowerCase().includes(query) ||
+        formateur.prenomFor.toLowerCase().includes(query) ||
+        formateur.emailFor.toLowerCase().includes(query) ||
+        formateur.telFor.includes(query) ||
+        formateur.adrFor.toLowerCase().includes(query)
+      );
     });
     this.cdr.detectChanges();
   }
@@ -146,14 +150,10 @@ export class FormateurComponent {
     this.cdr.detectChanges();
   }
 
-  getStatutClass(statut: string | undefined): string {
-    return statut || '';
-  }
-
   openAddFormateurModal(): void {
     this.isEditing = false;
     this.currentFormateur = this.resetFormateur();
-    this.currentFormateur.code = `FOR-${(this.formateurs.length + 1).toString().padStart(3, '0')}`;
+    this.currentFormateur.codeFor = `FOR-${(this.formateurs.length + 1).toString().padStart(3, '0')}`;
     this.showModal = true;
     this.cdr.detectChanges();
   }
@@ -172,13 +172,22 @@ export class FormateurComponent {
   }
 
   saveFormateur(): void {
+    const now = new Date().toISOString().replace('T', ' ').split('.')[0];
     if (this.isEditing) {
-      const index = this.formateurs.findIndex((f) => f.code === this.currentFormateur.code);
+      const index = this.formateurs.findIndex((f) => f.codeFor === this.currentFormateur.codeFor);
       if (index !== -1) {
-        this.formateurs[index] = { ...this.currentFormateur } as Formateur;
+        this.formateurs[index] = {
+          ...this.currentFormateur,
+          updated_at: now,
+          created_at: this.formateurs[index].created_at, // Preserve original created_at
+        } as Formateur;
       }
     } else {
-      this.formateurs.push({ ...this.currentFormateur } as Formateur);
+      this.formateurs.push({
+        ...this.currentFormateur,
+        created_at: now,
+        updated_at: now,
+      } as Formateur);
     }
     this.filteredFormateurs = [...this.formateurs];
     this.closeModal();
@@ -204,7 +213,7 @@ export class FormateurComponent {
 
   deleteFormateur(): void {
     if (this.formateurToDelete) {
-      this.formateurs = this.formateurs.filter((f) => f.code !== this.formateurToDelete!.code);
+      this.formateurs = this.formateurs.filter((f) => f.codeFor !== this.formateurToDelete!.codeFor);
       this.filteredFormateurs = [...this.formateurs];
       this.cancelDelete();
     }

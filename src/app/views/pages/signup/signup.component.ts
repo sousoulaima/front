@@ -1,19 +1,13 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { FormControlDirective, FormDirective, ButtonDirective } from '@coreui/angular';
 
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    FormControlDirective,
-    FormDirective,
-    ButtonDirective
-  ]
+  imports: [ReactiveFormsModule, RouterModule],
 })
 export class SignupComponent {
   signupForm: FormGroup;
@@ -45,7 +39,7 @@ export class SignupComponent {
       });
     } else {
       console.log('Form is invalid');
-      this.signupForm.markAllAsTouched(); // Mark all fields as touched to show validation errors
+      this.signupForm.markAllAsTouched(); // Show validation errors
     }
   }
 

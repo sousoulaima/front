@@ -1,66 +1,74 @@
-.wrapper {
-  transition: all 0.3s ease;
+/* Couleur pour Paramétrages */
+.nav-item-settings .nav-link {
+  color: #1e40af; /* bleu foncé */
+  background-color: #e0f2fe; /* bleu clair */
 }
 
-.sidebar {
-  width: 250px;
-  transition: width 0.3s ease;
+.nav-item-settings .nav-icon {
+  color: #1e40af;
 }
 
-.sidebar-narrow {
-  width: 60px;
+.nav-item-settings .nav-link:hover {
+  background-color: #dbeafe; /* bleu plus clair au survol */
+  color: #1e3a8a; /* bleu foncé au survol */
 }
 
-.sidebar-brand-full,
-.sidebar-brand-narrow {
-  display: flex;
-  align-items: center;
+/* Couleur pour la Gestion des utilisateurs */
+.nav-item-users .nav-link {
+  color: #10b981; /* vert foncé */
 }
 
-.sidebar-brand-narrow {
-  display: none;
+.nav-item-users .nav-icon {
+  color: #10b981;
 }
 
-.sidebar-narrow .sidebar-brand-full {
-  display: none;
+.nav-item-users .nav-link:hover {
+  background-color: #d1fae5; /* vert clair */
+  color: #065f46; /* vert foncé au survol */
 }
 
-.sidebar-narrow .sidebar-brand-narrow {
-  display: flex;
+/* Couleur pour la Caisse */
+.nav-item-caisse .nav-link {
+  color: #0b3d91; /* bleu foncé pour caisse */
+  background-color: #e0f7fa; /* bleu pâle pour caisse */
 }
 
-.sidebar-nav {
-  font-size: 0.875rem;
+.nav-item-caisse .nav-icon {
+  color: #0b3d91;
 }
 
-.sidebar-nav .nav-link {
-  color: #1e40af; /* blue-800 */
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  margin: 0.25rem 1rem;
-  transition: background-color 0.3s, color 0.3s, transform 0.2s;
+.nav-item-caisse .nav-link:hover {
+  background-color: #b2ebf2; /* bleu clair au survol */
+  color: #01579b; /* bleu foncé au survol */
 }
 
-.sidebar-nav .nav-link:hover {
-  background-color: #e0f2fe; /* blue-100 */
-  color: #1e3a8a; /* blue-900 */
-  transform: translateX(5px);
+/* Couleur pour Abonnements */
+.nav-item-abonnements .nav-link {
+  color: #f59e0b; /* orange foncé */
 }
 
-.sidebar-nav .nav-link.active {
-  background-color: #bfdbfe; /* blue-200 */
-  color: #1e3a8a; /* blue-900 */
-  font-weight: 600;
+.nav-item-abonnements .nav-icon {
+  color: #f59e0b;
 }
 
-.sidebar-footer button {
-  background: none;
-  border: none;
-  outline: none;
+.nav-item-abonnements .nav-link:hover {
+  background-color: #ffedd5; /* orange pâle au survol */
+  color: #b45309; /* orange plus foncé */
 }
 
-/* Animation delays */
-.animation-delay-100 { animation-delay: 100ms; }
-.animation-delay-200 { animation-delay: 200ms; }
-.animation-delay-300 { animation-delay: 300ms; }
-.animation-delay-400 { animation-delay: 400ms; }
+/* Exemple pour les sous-menus spécifiques */
+.nav-item-reglement .nav-link {
+  color: #ff5722; /* rouge pour Modalité de Règlement */
+}
+
+.nav-item-reglement .nav-link:hover {
+  background-color: #ffccbc; /* fond clair au survol */
+}
+
+.nav-item-categories .nav-link {
+  color: #9c27b0; /* violet pour Catégories Abonnements */
+}
+
+.nav-item-categories .nav-link:hover {
+  background-color: #e1bee7; /* violet clair au survol */
+}

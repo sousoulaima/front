@@ -9,150 +9,26 @@
             <label>Code</label>
             <input
               type="text"
-              [(ngModel)]="currentAbonnement.codeAbo"
-              name="codeAbo"
+              [(ngModel)]="currentAbonnement.CodeAbo"
+              name="CodeAbo"
               required
               readonly
-              #codeAbo="ngModel"
+              #CodeAbo="ngModel"
               class="form-input"
             />
-            <span class="error" *ngIf="codeAbo.invalid && codeAbo.touched">Le code est requis</span>
+            <span class="error" *ngIf="CodeAbo.invalid && CodeAbo.touched">Le code est requis</span>
           </div>
           <div class="form-group">
             <label>Date d'Abonnement</label>
             <input
               type="date"
-              [(ngModel)]="currentAbonnement.dateAbo"
-              name="dateAbo"
+              [(ngModel)]="currentAbonnement.DateAbo"
+              name="DateAbo"
               required
-              #dateAbo="ngModel"
+              #DateAbo="ngModel"
               class="form-input"
             />
-            <span class="error" *ngIf="dateAbo.invalid && dateAbo.touched">La date d'abonnement est requise</span>
-          </div>
-          <div class="form-group">
-            <label>Total HT (DT)</label>
-            <input
-              type="number"
-              [(ngModel)]="currentAbonnement.totalHTAbo"
-              name="totalHTAbo"
-              required
-              min="0"
-              step="0.01"
-              #totalHTAbo="ngModel"
-              class="form-input"
-            />
-            <span class="error" *ngIf="totalHTAbo.invalid && totalHTAbo.touched">Le total HT doit être ≥ 0</span>
-          </div>
-          <div class="form-group">
-            <label>Remise (DT)</label>
-            <input
-              type="number"
-              [(ngModel)]="currentAbonnement.totalRemise"
-              name="totalRemise"
-              required
-              min="0"
-              step="0.01"
-              #totalRemise="ngModel"
-              class="form-input"
-            />
-            <span class="error" *ngIf="totalRemise.invalid && totalRemise.touched">La remise doit être ≥ 0</span>
-          </div>
-          <div class="form-group">
-            <label>Total HT Net (DT)</label>
-            <input
-              type="number"
-              [(ngModel)]="currentAbonnement.totalHTNC"
-              name="totalHTNC"
-              required
-              min="0"
-              step="0.01"
-              #totalHTNC="ngModel"
-              class="form-input"
-            />
-            <span class="error" *ngIf="totalHTNC.invalid && totalHTNC.touched">Le total HT net doit être ≥ 0</span>
-          </div>
-          <div class="form-group">
-            <label>Total TTC (DT)</label>
-            <input
-              type="number"
-              [(ngModel)]="currentAbonnement.totalTTC"
-              name="totalTTC"
-              required
-              min="0"
-              step="0.01"
-              #totalTTC="ngModel"
-              class="form-input"
-            />
-            <span class="error" *ngIf="totalTTC.invalid && totalTTC.touched">Le total TTC doit être ≥ 0</span>
-          </div>
-          <div class="form-group">
-            <label>Solde Réglé</label>
-            <select
-              [(ngModel)]="currentAbonnement.solde_boclean"
-              name="solde_boclean"
-              required
-              #solde_boclean="ngModel"
-              class="form-input"
-            >
-              <option [value]="true">Oui</option>
-              <option [value]="false">Non</option>
-            </select>
-            <span class="error" *ngIf="solde_boclean.invalid && solde_boclean.touched">Le solde réglé est requis</span>
-          </div>
-          <div class="form-group">
-            <label>Reste à Payer (DT)</label>
-            <input
-              type="number"
-              [(ngModel)]="currentAbonnement.resteapayee"
-              name="resteapayee"
-              required
-              min="0"
-              step="0.01"
-              #resteapayee="ngModel"
-              class="form-input"
-            />
-            <span class="error" *ngIf="resteapayee.invalid && resteapayee.touched">Le reste à payer doit être ≥ 0</span>
-          </div>
-          <div class="form-group">
-            <label>Mode de Paiement</label>
-            <select
-              [(ngModel)]="currentAbonnement.miPaye"
-              name="miPaye"
-              required
-              #miPaye="ngModel"
-              class="form-input"
-            >
-              <option value="" disabled>Sélectionner un mode</option>
-              <option value="Espèces">Espèces</option>
-              <option value="Carte">Carte</option>
-              <option value="Chèque">Chèque</option>
-            </select>
-            <span class="error" *ngIf="miPaye.invalid && miPaye.touched">Le mode de paiement est requis</span>
-          </div>
-          <div class="form-group">
-            <label>Date Début</label>
-            <input
-              type="date"
-              [(ngModel)]="currentAbonnement.dateDeb"
-              name="dateDeb"
-              required
-              #dateDeb="ngModel"
-              class="form-input"
-            />
-            <span class="error" *ngIf="dateDeb.invalid && dateDeb.touched">La date de début est requise</span>
-          </div>
-          <div class="form-group">
-            <label>Date Fin</label>
-            <input
-              type="date"
-              [(ngModel)]="currentAbonnement.dateFin"
-              name="dateFin"
-              required
-              #dateFin="ngModel"
-              class="form-input"
-            />
-            <span class="error" *ngIf="dateFin.invalid && dateFin.touched">La date de fin est requise</span>
+            <span class="error" *ngIf="DateAbo.invalid && DateAbo.touched">La date d'abonnement est requise</span>
           </div>
           <div class="form-group">
             <label>Adhérent</label>
@@ -175,6 +51,7 @@
               required
               #typeDesignation="ngModel"
               class="form-input"
+              (change)="updateDateFin()"
             >
               <option value="" disabled>Sélectionner un type</option>
               <option value="Mensuel Standard">Mensuel Standard</option>
@@ -183,6 +60,146 @@
               <option value="Annuel Standard">Annuel Standard</option>
             </select>
             <span class="error" *ngIf="typeDesignation.invalid && typeDesignation.touched">Le type est requis</span>
+          </div>
+          <div class="form-group">
+            <label>Date Début</label>
+            <input
+              type="date"
+              [(ngModel)]="currentAbonnement.DateDeb"
+              name="DateDeb"
+              required
+              #DateDeb="ngModel"
+              class="form-input"
+              (change)="updateDateFin()"
+            />
+            <span class="error" *ngIf="DateDeb.invalid && DateDeb.touched">La date de début est requise</span>
+          </div>
+          <div class="form-group">
+            <label>Date Fin</label>
+            <input
+              type="date"
+              [(ngModel)]="currentAbonnement.Datefin"
+              name="Datefin"
+              required
+              #Datefin="ngModel"
+              class="form-input"
+            />
+            <span class="error" *ngIf="Datefin.invalid && Datefin.touched">La date de fin est requise</span>
+          </div>
+          <div class="form-group">
+            <label>Total HT (DT)</label>
+            <input
+              type="number"
+              [(ngModel)]="currentAbonnement.TotalHTAbo"
+              name="TotalHTAbo"
+              required
+              min="0"
+              step="0.01"
+              #TotalHTAbo="ngModel"
+              class="form-input"
+              (input)="updateFinancials()"
+            />
+            <span class="error" *ngIf="TotalHTAbo.invalid && TotalHTAbo.touched">Le total HT doit être ≥ 0</span>
+          </div>
+          <div class="form-group">
+            <label>Remise (DT)</label>
+            <input
+              type="number"
+              [(ngModel)]="currentAbonnement.TotalRemise"
+              name="TotalRemise"
+              required
+              min="0"
+              step="0.01"
+              #TotalRemise="ngModel"
+              class="form-input"
+              (input)="updateFinancials()"
+            />
+            <span class="error" *ngIf="TotalRemise.invalid && TotalRemise.touched">La remise doit être ≥ 0</span>
+          </div>
+          <div class="form-group">
+            <label>Total HT Net (DT)</label>
+            <input
+              type="number"
+              [(ngModel)]="currentAbonnement.TotalHTNC"
+              name="TotalHTNC"
+              required
+              min="0"
+              step="0.01"
+              #TotalHTNC="ngModel"
+              class="form-input"
+              (input)="updateFinancials()"
+            />
+            <span class="error" *ngIf="TotalHTNC.invalid && TotalHTNC.touched">Le total HT net doit être ≥ 0</span>
+          </div>
+          <div class="form-group">
+            <label>Total TTC (DT)</label>
+            <input
+              type="number"
+              [(ngModel)]="currentAbonnement.TotalTTC"
+              name="TotalTTC"
+              required
+              min="0"
+              step="0.01"
+              #TotalTTC="ngModel"
+              class="form-input"
+              (input)="updateFinancials()"
+            />
+            <span class="error" *ngIf="TotalTTC.invalid && TotalTTC.touched">Le total TTC doit être ≥ 0</span>
+          </div>
+          <div class="form-group">
+            <label>Solde Réglé</label>
+            <select
+              [(ngModel)]="currentAbonnement.Solde_boclean"
+              name="Solde_boclean"
+              required
+              #Solde_boclean="ngModel"
+              class="form-input"
+            >
+              <option [value]="true">Oui</option>
+              <option [value]="false">Non</option>
+            </select>
+            <span class="error" *ngIf="Solde_boclean.invalid && Solde_boclean.touched">Le solde réglé est requis</span>
+          </div>
+          <div class="form-group">
+            <label>Reste à Payer (DT)</label>
+            <input
+              type="number"
+              [(ngModel)]="currentAbonnement.Resteapayee"
+              name="Resteapayee"
+              required
+              min="0"
+              step="0.01"
+              #Resteapayee="ngModel"
+              class="form-input"
+            />
+            <span class="error" *ngIf="Resteapayee.invalid && Resteapayee.touched">Le reste à payer doit être ≥ 0</span>
+          </div>
+          <div class="form-group">
+            <label>Mode de Paiement</label>
+            <select
+              [(ngModel)]="currentAbonnement.MIPaye"
+              name="MIPaye"
+              required
+              #MIPaye="ngModel"
+              class="form-input"
+            >
+              <option value="" disabled>Sélectionner un mode</option>
+              <option value="Espèces">Espèces</option>
+              <option value="Carte">Carte</option>
+              <option value="Chèque">Chèque</option>
+            </select>
+            <span class="error" *ngIf="MIPaye.invalid && MIPaye.touched">Le mode de paiement est requis</span>
+          </div>
+          <div class="form-group">
+            <label>Remarques</label>
+            <textarea
+              [(ngModel)]="currentAbonnement.remarques"
+              name="remarques"
+              #remarques="ngModel"
+              class="form-input"
+              placeholder="Ajouter des remarques ou commentaires"
+              rows="4"
+            ></textarea>
           </div>
           <div class="modal-actions">
             <button type="button" class="cancel-btn" (click)="closeModal()">Annuler</button>
@@ -197,19 +214,20 @@
       <div class="modal-content">
         <h2 class="modal-title">Détails de l'abonnement</h2>
         <div class="user-details">
-          <p><strong>Code :</strong> {{ viewedAbonnement?.codeAbo }}</p>
-          <p><strong>Date d'Abonnement :</strong> {{ viewedAbonnement?.dateAbo }}</p>
-          <p><strong>Total HT :</strong> {{ viewedAbonnement?.totalHTAbo }} DT</p>
-          <p><strong>Remise :</strong> {{ viewedAbonnement?.totalRemise }} DT</p>
-          <p><strong>Total HT Net :</strong> {{ viewedAbonnement?.totalHTNC }} DT</p>
-          <p><strong>Total TTC :</strong> {{ viewedAbonnement?.totalTTC }} DT</p>
-          <p><strong>Solde Réglé :</strong> {{ viewedAbonnement?.solde_boclean ? 'Oui' : 'Non' }}</p>
-          <p><strong>Reste à Payer :</strong> {{ viewedAbonnement?.resteapayee }} DT</p>
-          <p><strong>Mode de Paiement :</strong> <span [ngClass]="getMiPayeClass(viewedAbonnement?.miPaye)">{{ viewedAbonnement?.miPaye }}</span></p>
-          <p><strong>Date Début :</strong> {{ viewedAbonnement?.dateDeb }}</p>
-          <p><strong>Date Fin :</strong> {{ viewedAbonnement?.dateFin }}</p>
+          <p><strong>Code :</strong> {{ viewedAbonnement?.CodeAbo }}</p>
+          <p><strong>Date d'Abonnement :</strong> {{ viewedAbonnement?.DateAbo }}</p>
+          <p><strong>Total HT :</strong> {{ viewedAbonnement?.TotalHTAbo }} DT</p>
+          <p><strong>Remise :</strong> {{ viewedAbonnement?.TotalRemise }} DT</p>
+          <p><strong>Total HT Net :</strong> {{ viewedAbonnement?.TotalHTNC }} DT</p>
+          <p><strong>Total TTC :</strong> {{ viewedAbonnement?.TotalTTC }} DT</p>
+          <p><strong>Solde Réglé :</strong> {{ viewedAbonnement?.Solde_boclean ? 'Oui' : 'Non' }}</p>
+          <p><strong>Reste à Payer :</strong> {{ viewedAbonnement?.Resteapayee }} DT</p>
+          <p><strong>Mode de Paiement :</strong> <span [ngClass]="getMiPayeClass(viewedAbonnement?.MIPaye)">{{ viewedAbonnement?.MIPaye }}</span></p>
+          <p><strong>Date Début :</strong> {{ viewedAbonnement?.DateDeb }}</p>
+          <p><strong>Date Fin :</strong> {{ viewedAbonnement?.Datefin }}</p>
           <p><strong>Adhérent :</strong> {{ viewedAbonnement?.adherentName }}</p>
           <p><strong>Type :</strong> {{ viewedAbonnement?.typeDesignation }}</p>
+          <p><strong>Remarques :</strong> {{ viewedAbonnement?.remarques || 'Aucune' }}</p>
         </div>
         <div class="modal-actions">
           <button class="close-btn" (click)="closeViewModal()">Fermer</button>
@@ -221,7 +239,7 @@
     <div class="modal" *ngIf="showDeleteConfirm" @modalAnimation>
       <div class="modal-content">
         <h2 class="modal-title">Confirmer la suppression</h2>
-        <p class="modal-text">Êtes-vous sûr de vouloir supprimer l'abonnement {{ abonnementToDelete?.codeAbo }} ?</p>
+        <p class="modal-text">Êtes-vous sûr de vouloir supprimer l'abonnement {{ abonnementToDelete?.CodeAbo }} ?</p>
         <div class="modal-actions">
           <button class="cancel-btn" (click)="cancelDelete()">Annuler</button>
           <button class="delete-btn" (click)="deleteAbonnement()">Supprimer</button>
@@ -293,6 +311,7 @@
             <th>DATE FIN</th>
             <th>ADHÉRENT</th>
             <th>TYPE</th>
+            <th>REMARQUES</th>
             <th>ACTIONS</th>
           </tr>
         </thead>
@@ -302,21 +321,22 @@
             class="animate-slide-in-right"
             [ngClass]="'animation-delay-' + (i * 100)"
           >
-            <td>{{ abonnement.codeAbo }}</td>
-            <td>{{ abonnement.dateAbo }}</td>
-            <td>{{ abonnement.totalHTAbo }} DT</td>
-            <td>{{ abonnement.totalRemise }} DT</td>
-            <td>{{ abonnement.totalHTNC }} DT</td>
-            <td>{{ abonnement.totalTTC }} DT</td>
-            <td>{{ abonnement.solde_boclean ? 'Oui' : 'Non' }}</td>
-            <td>{{ abonnement.resteapayee }} DT</td>
+            <td>{{ abonnement.CodeAbo }}</td>
+            <td>{{ abonnement.DateAbo }}</td>
+            <td>{{ abonnement.TotalHTAbo }} DT</td>
+            <td>{{ abonnement.TotalRemise }} DT</td>
+            <td>{{ abonnement.TotalHTNC }} DT</td>
+            <td>{{ abonnement.TotalTTC }} DT</td>
+            <td>{{ abonnement.Solde_boclean ? 'Oui' : 'Non' }}</td>
+            <td>{{ abonnement.Resteapayee }} DT</td>
             <td>
-              <span class="miPaye" [ngClass]="getMiPayeClass(abonnement.miPaye)">{{ abonnement.miPaye }}</span>
+              <span class="miPaye" [ngClass]="getMiPayeClass(abonnement.MIPaye)">{{ abonnement.MIPaye }}</span>
             </td>
-            <td>{{ abonnement.dateDeb }}</td>
-            <td>{{ abonnement.dateFin }}</td>
+            <td>{{ abonnement.DateDeb }}</td>
+            <td>{{ abonnement.Datefin }}</td>
             <td>{{ abonnement.adherentName }}</td>
             <td>{{ abonnement.typeDesignation }}</td>
+            <td>{{ abonnement.remarques || '-' }}</td>
             <td class="actions">
               <button class="action-btn view" (click)="viewAbonnement(abonnement)" title="Voir">👁️</button>
               <button class="action-btn edit" (click)="openEditAbonnementModal(abonnement)" title="Éditer">✏️</button>

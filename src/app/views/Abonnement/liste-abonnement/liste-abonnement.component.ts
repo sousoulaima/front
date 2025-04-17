@@ -1,25 +1,8 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
-
-interface Abonnement {
-  codeAbo: string;
-  dateAbo: string;
-  totalHTAbo: number;
-  totalRemise: number;
-  totalHTNC: number;
-  totalTTC: number;
-  solde_boclean: boolean;
-  resteapayee: number;
-  miPaye: string;
-  dateDeb: string;
-  dateFin: string;
-  adherentCode: string;
-  typeAbonnementCode: string;
-  adherentName?: string; // For UI display
-  typeDesignation?: string; // For UI display
-}
+import { AbonnementService, Abonnement } from '../../../services/abonnement.service';
 
 @Component({
   selector: 'app-liste-abonnement',
@@ -48,79 +31,9 @@ interface Abonnement {
     ]),
   ],
 })
-export class ListeAbonnementComponent {
-  abonnements: Abonnement[] = [
-    {
-      codeAbo: 'ABO-001',
-      dateAbo: '2025-01-01',
-      totalHTAbo: 33.61, // Example: 39.99 / 1.19 (assuming 19% tax)
-      totalRemise: 0,
-      totalHTNC: 33.61,
-      totalTTC: 39.99,
-      solde_boclean: true,
-      resteapayee: 0,
-      miPaye: 'Espèces',
-      dateDeb: '2025-01-01',
-      dateFin: '2025-02-01',
-      adherentCode: 'ADH-001',
-      typeAbonnementCode: 'TYPE-001',
-      adherentName: 'Dupont Martin',
-      typeDesignation: 'Mensuel Standard',
-    },
-    {
-      codeAbo: 'ABO-002',
-      dateAbo: '2025-02-01',
-      totalHTAbo: 50.41, // Example: 59.99 / 1.19
-      totalRemise: 0,
-      totalHTNC: 50.41,
-      totalTTC: 59.99,
-      solde_boclean: false,
-      resteapayee: 59.99,
-      miPaye: 'Carte',
-      dateDeb: '2025-02-01',
-      dateFin: '2025-03-01',
-      adherentCode: 'ADH-002',
-      typeAbonnementCode: 'TYPE-002',
-      adherentName: 'Laurent Sophie',
-      typeDesignation: 'Mensuel Premium',
-    },
-    {
-      codeAbo: 'ABO-003',
-      dateAbo: '2025-01-15',
-      totalHTAbo: 420.16, // Example: 499.99 / 1.19
-      totalRemise: 50,
-      totalHTNC: 370.16,
-      totalTTC: 440.49, // 370.16 * 1.19
-      solde_boclean: false,
-      resteapayee: 220.25, // Example: half paid
-      miPaye: 'Chèque',
-      dateDeb: '2025-01-15',
-      dateFin: '2026-01-15',
-      adherentCode: 'ADH-003',
-      typeAbonnementCode: 'TYPE-005',
-      adherentName: 'Dubois Lucas',
-      typeDesignation: 'Annuel Standard',
-    },
-    {
-      codeAbo: 'ABO-004',
-      dateAbo: '2025-03-01',
-      totalHTAbo: 142.85, // Example: 169.99 / 1.19
-      totalRemise: 0,
-      totalHTNC: 142.85,
-      totalTTC: 169.99,
-      solde_boclean: true,
-      resteapayee: 0,
-      miPaye: 'Espèces',
-      dateDeb: '2025-03-01',
-      dateFin: '2025-06-01',
-      adherentCode: 'ADH-004',
-      typeAbonnementCode: 'TYPE-004',
-      adherentName: 'Bernard Emma',
-      typeDesignation: 'Trimestriel Premium',
-    },
-  ];
-
-  filteredAbonnements: Abonnement[] = [...this.abonnements];
+export class ListeAbonnementComponent implements OnInit {
+  abonnements: Abonnement[] = [];
+  filteredAbonnements: Abonnement[] = [];
   searchQuery = '';
   filterType = '';
   filterMiPaye = '';
@@ -133,19 +46,35 @@ export class ListeAbonnementComponent {
   viewedAbonnement: Abonnement | null = null;
   abonnementToDelete: Abonnement | null = null;
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  typeMontants: { [key: string]: { totalTTC: number; duration: number; code: string } } = {
+    'Mensuel Standard': { totalTTC: 39.99, duration: 1, code: 'TYPE-001' },
+    'Mensuel Premium': { totalTTC: 59.99, duration: 1, code: 'TYPE-002' },
+    'Trimestriel Premium': { totalTTC: 169.99, duration: 3, code: 'TYPE-004' },
+    'Annuel Standard': { totalTTC: 499.99, duration: 12, code: 'TYPE-005' },
+  };
+
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private abonnementService: AbonnementService
+  ) {}
+
+  ngOnInit(): void {
+    this.abonnements = this.abonnementService.getAbonnements();
+    this.filteredAbonnements = [...this.abonnements];
+  }
 
   filterAbonnements(): void {
+    const query = this.searchQuery.toLowerCase().trim();
     this.filteredAbonnements = this.abonnements.filter((abonnement) => {
       const matchesSearch =
-        (abonnement.codeAbo?.toLowerCase().includes(this.searchQuery.toLowerCase()) || '') ||
-        (abonnement.adherentName?.toLowerCase().includes(this.searchQuery.toLowerCase()) || '') ||
-        (abonnement.dateAbo?.includes(this.searchQuery) || '') ||
-        (abonnement.dateDeb?.includes(this.searchQuery) || '') ||
-        (abonnement.dateFin?.includes(this.searchQuery) || '') ||
-        (abonnement.typeDesignation?.toLowerCase().includes(this.searchQuery.toLowerCase()) || '');
+        (abonnement.CodeAbo?.toLowerCase().includes(query) ?? false) ||
+        (abonnement.adherentName?.toLowerCase().includes(query) ?? false) ||
+        (abonnement.DateAbo?.includes(query) ?? false) ||
+        (abonnement.DateDeb?.includes(query) ?? false) ||
+        (abonnement.Datefin?.includes(query) ?? false) ||
+        (abonnement.typeDesignation?.toLowerCase().includes(query) ?? false);
       const matchesType = this.filterType ? abonnement.typeDesignation === this.filterType : true;
-      const matchesMiPaye = this.filterMiPaye ? abonnement.miPaye === this.filterMiPaye : true;
+      const matchesMiPaye = this.filterMiPaye ? abonnement.MIPaye === this.filterMiPaye : true;
       return matchesSearch && matchesType && matchesMiPaye;
     });
     this.cdr.detectChanges();
@@ -153,11 +82,6 @@ export class ListeAbonnementComponent {
 
   toggleFilter(): void {
     this.showFilter = !this.showFilter;
-    this.cdr.detectChanges();
-  }
-
-  getMiPayeClass(miPaye: string | undefined): string {
-    return miPaye || '';
   }
 
   openEditAbonnementModal(abonnement: Abonnement): void {
@@ -173,14 +97,36 @@ export class ListeAbonnementComponent {
     this.cdr.detectChanges();
   }
 
-  saveAbonnement(): void {
-    if (this.isEditing) {
-      const index = this.abonnements.findIndex((a) => a.codeAbo === (this.currentAbonnement as Abonnement).codeAbo);
-      if (index !== -1) {
-        this.abonnements[index] = { ...this.currentAbonnement } as Abonnement;
-      }
+  updateFinancials(): void {
+    const totalHTAbo = this.currentAbonnement.TotalHTAbo || 0;
+    const totalRemise = this.currentAbonnement.TotalRemise || 0;
+    const taxRate = 0.19; // Assuming 19% tax
+    this.currentAbonnement.TotalHTNC = totalHTAbo - totalRemise;
+    this.currentAbonnement.TotalTTC = this.currentAbonnement.TotalHTNC * (1 + taxRate);
+    this.cdr.detectChanges();
+  }
+
+  updateDateFin(): void {
+    if (!this.currentAbonnement.DateDeb || !this.currentAbonnement.typeDesignation) {
+      this.currentAbonnement.Datefin = '';
+      return;
     }
-    this.filteredAbonnements = [...this.abonnements];
+    const startDate = new Date(this.currentAbonnement.DateDeb);
+    const typeInfo = this.typeMontants[this.currentAbonnement.typeDesignation];
+    if (!typeInfo) return;
+    const endDate = new Date(startDate);
+    endDate.setMonth(startDate.getMonth() + typeInfo.duration);
+    this.currentAbonnement.Datefin = endDate.toISOString().split('T')[0];
+    this.currentAbonnement.Code = typeInfo.code;
+    this.cdr.detectChanges();
+  }
+
+  saveAbonnement(): void {
+    if (this.isEditing && this.currentAbonnement.CodeAbo) {
+      this.abonnementService.updateAbonnement(this.currentAbonnement as Abonnement);
+      this.abonnements = this.abonnementService.getAbonnements();
+      this.filteredAbonnements = [...this.abonnements];
+    }
     this.closeModal();
   }
 
@@ -209,10 +155,24 @@ export class ListeAbonnementComponent {
   }
 
   deleteAbonnement(): void {
-    if (this.abonnementToDelete) {
-      this.abonnements = this.abonnements.filter((a) => a.codeAbo !== this.abonnementToDelete!.codeAbo);
+    if (this.abonnementToDelete?.CodeAbo) {
+      this.abonnementService.deleteAbonnement(this.abonnementToDelete.CodeAbo);
+      this.abonnements = this.abonnementService.getAbonnements();
       this.filteredAbonnements = [...this.abonnements];
       this.cancelDelete();
+    }
+  }
+
+  getMiPayeClass(miPaye: string | undefined): string {
+    switch (miPaye) {
+      case 'Espèces':
+        return 'miPaye-especes';
+      case 'Carte':
+        return 'miPaye-carte';
+      case 'Chèque':
+        return 'miPaye-cheque';
+      default:
+        return '';
     }
   }
 }

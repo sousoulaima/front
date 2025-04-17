@@ -1,4 +1,4 @@
-.gestion-reglements-container {
+.gestion-modalites-container {
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -6,7 +6,7 @@
   background: linear-gradient(to bottom right, #f0f9ff, #ecfdf5);
 }
 
-.gestion-reglements {
+.gestion-modalites {
   width: 100%;
   max-width: 1200px;
   padding: 24px;
@@ -64,7 +64,7 @@
         border-radius: 8px;
         background: #f0f9ff;
         color: #1e40af;
-        font-size: 14px; /* Correction : ajout du point-virgule */
+        font-size: 14px;
         transition: border-color 0.3s ease;
 
         &:focus {
@@ -171,33 +171,6 @@
 
         &:hover {
           background: #f0f9ff;
-        }
-      }
-
-      .status {
-        padding: 6px 12px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: 500;
-
-        &.Réussi {
-          background: #10b981;
-          color: #ffffff;
-        }
-
-        &.En-cours {
-          background: #2563eb;
-          color: #ffffff;
-        }
-
-        &.Echoué {
-          background: #ef4444;
-          color: #ffffff;
-        }
-
-        &.En-attente {
-          background: #f59e0b;
-          color: #1f2937;
         }
       }
 

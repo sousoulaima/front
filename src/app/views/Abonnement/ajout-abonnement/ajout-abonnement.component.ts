@@ -2,24 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-
-interface Abonnement {
-  codeAbo: string;
-  dateAbo: string;
-  totalHTAbo: number;
-  totalRemise: number;
-  totalHTNC: number;
-  totalTTC: number;
-  solde_boclean: boolean;
-  resteapayee: number;
-  miPaye: string;
-  dateDeb: string;
-  dateFin: string;
-  adherentCode: string;
-  typeAbonnementCode: string;
-  adherentName?: string; // For UI display
-  typeDesignation?: string; // For UI display
-}
+import { AbonnementService, Abonnement } from '../../../services/abonnement.service';
 
 @Component({
   selector: 'app-ajout-abonnement',
@@ -30,19 +13,19 @@ interface Abonnement {
 })
 export class AjoutAbonnementComponent {
   newAbonnement: Partial<Abonnement> = {
-    codeAbo: `ABO-${(Math.floor(Math.random() * 1000) + 1).toString().padStart(3, '0')}`,
-    dateAbo: new Date().toISOString().split('T')[0],
-    totalHTAbo: 0,
-    totalRemise: 0,
-    totalHTNC: 0,
-    totalTTC: 0,
-    solde_boclean: false,
-    resteapayee: 0,
-    miPaye: '',
-    dateDeb: new Date().toISOString().split('T')[0],
-    dateFin: '',
-    adherentCode: '',
-    typeAbonnementCode: '',
+    CodeAbo: `ABO-${(Math.floor(Math.random() * 1000) + 1).toString().padStart(3, '0')}`,
+    DateAbo: new Date().toISOString().split('T')[0],
+    TotalHTAbo: 0,
+    TotalRemise: 0,
+    TotalHTNC: 0,
+    TotalTTC: 0,
+    Solde_boclean: false,
+    Resteapayee: 0,
+    MIPaye: '',
+    DateDeb: new Date().toISOString().split('T')[0],
+    Datefin: '',
+    IDPOINtage: '',
+    Code: '',
     adherentName: '',
     typeDesignation: '',
   };
@@ -54,44 +37,60 @@ export class AjoutAbonnementComponent {
     'Annuel Standard': { totalTTC: 499.99, duration: 12, code: 'TYPE-005' },
   };
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private abonnementService: AbonnementService
+  ) {}
 
   updateMontant(): void {
     const typeInfo = this.typeMontants[this.newAbonnement.typeDesignation || ''];
     if (typeInfo) {
       const taxRate = 0.19; // Assuming 19% tax
-      this.newAbonnement.totalTTC = typeInfo.totalTTC;
-      this.newAbonnement.totalHTAbo = typeInfo.totalTTC / (1 + taxRate);
-      this.newAbonnement.totalRemise = 0; // Default to 0 for new subscription
-      this.newAbonnement.totalHTNC = this.newAbonnement.totalHTAbo;
-      this.newAbonnement.typeAbonnementCode = typeInfo.code;
+      this.newAbonnement.TotalTTC = typeInfo.totalTTC;
+      this.newAbonnement.TotalHTAbo = typeInfo.totalTTC / (1 + taxRate);
+      this.newAbonnement.TotalRemise = 0;
+      this.newAbonnement.TotalHTNC = this.newAbonnement.TotalHTAbo;
+      this.newAbonnement.Code = typeInfo.code;
       this.calculateDateFin();
     } else {
-      this.newAbonnement.totalTTC = 0;
-      this.newAbonnement.totalHTAbo = 0;
-      this.newAbonnement.totalRemise = 0;
-      this.newAbonnement.totalHTNC = 0;
-      this.newAbonnement.dateFin = '';
+      this.newAbonnement.TotalTTC = 0;
+      this.newAbonnement.TotalHTAbo = 0;
+      this.newAbonnement.TotalRemise = 0;
+      this.newAbonnement.TotalHTNC = 0;
+      this.newAbonnement.Datefin = '';
     }
   }
 
+  updateFinancials(): void {
+    const totalHTAbo = this.newAbonnement.TotalHTAbo || 0;
+    const totalRemise = this.newAbonnement.TotalRemise || 0;
+    const taxRate = 0.19; // Assuming 19% tax
+    this.newAbonnement.TotalHTNC = totalHTAbo - totalRemise;
+    this.newAbonnement.TotalTTC = this.newAbonnement.TotalHTNC * (1 + taxRate);
+  }
+
   calculateDateFin(): void {
-    if (!this.newAbonnement.dateDeb || !this.newAbonnement.typeDesignation) {
-      this.newAbonnement.dateFin = '';
+    if (!this.newAbonnement.DateDeb || !this.newAbonnement.typeDesignation) {
+      this.newAbonnement.Datefin = '';
       return;
     }
-    const startDate = new Date(this.newAbonnement.dateDeb);
+    const startDate = new Date(this.newAbonnement.DateDeb);
     const typeInfo = this.typeMontants[this.newAbonnement.typeDesignation];
     if (!typeInfo) return;
     const endDate = new Date(startDate);
     endDate.setMonth(startDate.getMonth() + typeInfo.duration);
-    this.newAbonnement.dateFin = endDate.toISOString().split('T')[0];
+    this.newAbonnement.Datefin = endDate.toISOString().split('T')[0];
   }
 
   saveAbonnement(): void {
-    // In a real app, map adherentName to adherentCode and typeDesignation to typeAbonnementCode
-    console.log('Abonnement saved:', this.newAbonnement);
-    this.router.navigate(['/liste-abonnement']);
+    if (this.newAbonnement.adherentName && this.newAbonnement.typeDesignation) {
+      if (!this.newAbonnement.IDPOINtage) {
+        this.newAbonnement.IDPOINtage = `ADH-${(Math.floor(Math.random() * 1000) + 1).toString().padStart(3, '0')}`;
+      }
+      this.abonnementService.addAbonnement(this.newAbonnement as Abonnement);
+      alert('Abonnement bien enregistré');
+      this.router.navigate(['/liste-abonnement']);
+    }
   }
 
   goBack(): void {

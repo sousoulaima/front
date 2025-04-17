@@ -1,127 +1,103 @@
-<div class="gestion-reglements-container">
-  <div class="gestion-reglements">
-    <!-- Modal for Adding/Editing a Payment -->
+<div class="gestion-modalites-container">
+  <div class="gestion-modalites">
+    <!-- Modal for Adding/Editing a Modalité -->
     <div class="modal" *ngIf="showModal" @modalAnimation>
       <div class="modal-content">
-        <h2 class="modal-title">{{ isEditing ? 'Éditer le règlement' : 'Ajouter un règlement' }}</h2>
-        <form (ngSubmit)="savePayment()" #paymentForm="ngForm">
+        <h2 class="modal-title">{{ isEditing ? 'Modifier la modalité' : 'Ajouter une modalité' }}</h2>
+        <form (ngSubmit)="saveModalite()" #modaliteForm="ngForm">
           <div class="form-group">
-            <label>Code</label>
+            <label>Code Modalité</label>
             <input
               type="text"
-              [(ngModel)]="currentPayment.codeReg"
-              name="codeReg"
+              [(ngModel)]="currentModalite.codeMod"
+              name="codeMod"
               required
               readonly
-              #codeReg="ngModel"
+              #codeMod="ngModel"
               class="form-input"
+              placeholder="Code généré automatiquement"
             />
-            <span class="error" *ngIf="codeReg.invalid && codeReg.touched">Le code est requis</span>
+            <span class="error" *ngIf="codeMod.invalid && codeMod.touched">Le code est requis</span>
           </div>
           <div class="form-group">
-            <label>Date</label>
-            <input
-              type="date"
-              [(ngModel)]="currentPayment.dateReg"
-              name="dateReg"
-              required
-              #dateReg="ngModel"
-              class="form-input"
-            />
-            <span class="error" *ngIf="dateReg.invalid && dateReg.touched">La date est requise</span>
-          </div>
-          <div class="form-group">
-            <label>Mode de règlement</label>
-            <select
-              [(ngModel)]="currentPayment.modaliteRegCodeMod"
-              name="modaliteRegCodeMod"
-              required
-              #modaliteRegCodeMod="ngModel"
-              class="form-input"
-            >
-              <option *ngFor="let modalite of modaliteRegs" [value]="modalite.codeMod">
-                {{ modalite.designationMod }}
-              </option>
-            </select>
-            <span class="error" *ngIf="modaliteRegCodeMod.invalid && modaliteRegCodeMod.touched">Le mode est requis</span>
-          </div>
-          <div class="form-group">
-            <label>Montant (DT)</label>
-            <input
-              type="number"
-              [(ngModel)]="currentPayment.mtrReg"
-              name="mtrReg"
-              required
-              min="0"
-              step="0.01"
-              #mtrReg="ngModel"
-              class="form-input"
-            />
-            <span class="error" *ngIf="mtrReg.invalid && mtrReg.touched">Un montant valide est requis</span>
-          </div>
-          <div class="form-group">
-            <label>Numéro de Chèque (optionnel)</label>
+            <label>Désignation Modalité</label>
             <input
               type="text"
-              [(ngModel)]="currentPayment.numChq"
-              name="numChq"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group">
-            <label>Numéro de Traite (optionnel)</label>
-            <input
-              type="text"
-              [(ngModel)]="currentPayment.numTraite"
-              name="numTraite"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group">
-            <label>Abonnement</label>
-            <select
-              [(ngModel)]="currentPayment.abonnementCodeAbo"
-              name="abonnementCodeAbo"
+              [(ngModel)]="currentModalite.designationMod"
+              name="designationMod"
               required
-              #abonnementCodeAbo="ngModel"
+              #designationMod="ngModel"
               class="form-input"
-            >
-              <option *ngFor="let abo of abonnements" [value]="abo.codeAbo">
-                {{ abo.codeAbo }}
-              </option>
-            </select>
-            <span class="error" *ngIf="abonnementCodeAbo.invalid && abonnementCodeAbo.touched">L'abonnement est requis</span>
-          </div>
-          <div class="form-group">
-            <label>Commentaire</label>
-            <textarea
-              [(ngModel)]="currentPayment.commentaire"
-              name="commentaire"
-              class="form-input"
-              rows="3"
-            ></textarea>
+              placeholder="Entrez la désignation"
+            />
+            <span class="error" *ngIf="designationMod.invalid && designationMod.touched">La désignation est requise</span>
           </div>
           <div class="modal-actions">
             <button type="button" class="cancel-btn" (click)="closeModal()">Annuler</button>
-            <button type="submit" class="save-btn" [disabled]="!paymentForm.valid">Sauvegarder</button>
+            <button type="submit" class="save-btn" [disabled]="!modaliteForm.valid">Enregistrer</button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- Modal for Viewing a Payment -->
+    <!-- Header Section -->
+    <div class="header">
+      <div class="header-title">
+        <h1 class="text-blue-800 animate-fade-in">Modalités de Règlement</h1>
+        <p class="text-gray-600 animate-fade-in">Liste des modalités de règlement ({{ filteredModalites.length }} modalités)</p>
+      </div>
+      <button class="add-btn bg-blue-600 hover:bg-blue-700 text-white" (click)="openAddModal()">+ Ajouter une modalité</button>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-filter">
+      <div class="search">
+        <input
+          type="text"
+          placeholder="Rechercher une modalité..."
+          [(ngModel)]="searchQuery"
+          (input)="filterModalites()"
+          class="search-input"
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+    </div>
+
+    <!-- Modalités Table -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>CODE MODALITÉ</th>
+            <th>DÉSIGNATION MODALITÉ</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let modalite of filteredModalites; let i = index"
+            class="animate-slide-in-right"
+            [ngClass]="'animation-delay-' + (i * 100)"
+          >
+            <td>{{ modalite.codeMod }}</td>
+            <td>{{ modalite.designationMod }}</td>
+            <td class="actions">
+              <button class="action-btn view" (click)="viewModalite(modalite)" title="Voir">👁️</button>
+              <button class="action-btn edit" (click)="openEditModal(modalite)" title="Éditer">✏️</button>
+              <button class="action-btn delete" (click)="confirmDeleteModalite(modalite)" title="Supprimer">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Modal for Viewing a Modalité -->
     <div class="modal" *ngIf="showViewModal" @modalAnimation>
       <div class="modal-content">
-        <h2 class="modal-title">Détails du règlement</h2>
+        <h2 class="modal-title">Détails de la modalité</h2>
         <div class="user-details">
-          <p><strong>Code :</strong> {{ viewedPayment?.codeReg }}</p>
-          <p><strong>Date :</strong> {{ viewedPayment?.dateReg }}</p>
-          <p><strong>Mode :</strong> {{ getModaliteRegDesignation(viewedPayment?.modaliteRegCodeMod!) }}</p>
-          <p><strong>Montant :</strong> {{ viewedPayment?.mtrReg }} DT</p>
-          <p><strong>Numéro de Chèque :</strong> {{ viewedPayment?.numChq || 'Aucun' }}</p>
-          <p><strong>Numéro de Traite :</strong> {{ viewedPayment?.numTraite || 'Aucun' }}</p>
-          <p><strong>Abonnement :</strong> {{ viewedPayment?.abonnementCodeAbo }}</p>
-          <p><strong>Commentaire :</strong> {{ viewedPayment?.commentaire || 'Aucun' }}</p>
+          <p><strong>Code Modalité :</strong> {{ viewedModalite?.codeMod }}</p>
+          <p><strong>Désignation Modalité :</strong> {{ viewedModalite?.designationMod }}</p>
         </div>
         <div class="modal-actions">
           <button class="close-btn" (click)="closeViewModal()">Fermer</button>
@@ -133,89 +109,12 @@
     <div class="modal" *ngIf="showDeleteConfirm" @modalAnimation>
       <div class="modal-content">
         <h2 class="modal-title">Confirmer la suppression</h2>
-        <p class="modal-text">Êtes-vous sûr de vouloir supprimer le règlement {{ paymentToDelete?.codeReg }} ?</p>
+        <p class="modal-text">Êtes-vous sûr de vouloir supprimer la modalité {{ modaliteToDelete?.designationMod }} ?</p>
         <div class="modal-actions">
           <button class="cancel-btn" (click)="cancelDelete()">Annuler</button>
-          <button class="delete-btn" (click)="deletePayment()">Supprimer</button>
+          <button class="delete-btn" (click)="deleteModalite()">Supprimer</button>
         </div>
       </div>
-    </div>
-
-    <!-- Header Section -->
-    <div class="header">
-      <div class="header-title">
-        <h1 class="text-blue-800 animate-fade-in">Module de Règlement</h1>
-        <p class="text-gray-600 animate-fade-in">Gestion des règlements et transactions ({{ filteredPayments.length }} règlements)</p>
-      </div>
-      <button class="add-btn bg-blue-600 hover:bg-blue-700 text-white" (click)="openAddPaymentModal()">+ Ajouter un règlement</button>
-    </div>
-
-    <!-- Search and Filter Section -->
-    <div class="search-filter">
-      <div class="search">
-        <input
-          type="text"
-          placeholder="Rechercher un règlement..."
-          [(ngModel)]="searchQuery"
-          (input)="filterPayments()"
-          class="search-input"
-        />
-        <span class="search-icon">🔍</span>
-      </div>
-      <div class="filter-container">
-        <button class="filter-btn" (click)="toggleFilter()">Filtrer ▼</button>
-        <div class="filter-dropdown" *ngIf="showFilter">
-          <label class="filter-label">
-            Mode :
-            <select [(ngModel)]="filterMode" (change)="filterPayments()" class="filter-select">
-              <option value="">Tous</option>
-              <option *ngFor="let modalite of modaliteRegs" [value]="modalite.codeMod">
-                {{ modalite.designationMod }}
-              </option>
-            </select>
-          </label>
-        </div>
-      </div>
-    </div>
-
-    <!-- Payments Table -->
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>CODE</th>
-            <th>DATE</th>
-            <th>MODE</th>
-            <th>MONTANT</th>
-            <th>NUM. CHÈQUE</th>
-            <th>NUM. TRAITE</th>
-            <th>ABONNEMENT</th>
-            <th>COMMENTAIRE</th>
-            <th>ACTIONS</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let payment of filteredPayments; let i = index"
-            class="animate-slide-in-right"
-            [ngClass]="'animation-delay-' + (i * 100)"
-          >
-            <td>{{ payment.codeReg }}</td>
-            <td>{{ payment.dateReg }}</td>
-            <td>{{ getModaliteRegDesignation(payment.modaliteRegCodeMod) }}</td>
-            <td>{{ payment.mtrReg }} DT</td>
-            <td>{{ payment.numChq || 'Aucun' }}</td>
-            <td>{{ payment.numTraite || 'Aucun' }}</td>
-            <td>{{ payment.abonnementCodeAbo }}</td>
-            <td>{{ payment.commentaire || 'Aucun' }}</td>
-            <td class="actions">
-              <button class="action-btn view" (click)="viewPayment(payment)" title="Voir">👁️</button>
-              <button class="action-btn edit" (click)="openEditPaymentModal(payment)" title="Éditer">✏️</button>
-              <button class="action-btn delete" (click)="confirmDeletePayment(payment)" title="Supprimer">🗑️</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </div>

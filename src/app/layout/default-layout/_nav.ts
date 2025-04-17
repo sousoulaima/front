@@ -1,354 +1,112 @@
 import { INavData } from '@coreui/angular';
 
 export const navItems: INavData[] = [
-
   {
     name: 'Tableau de bord',
     iconComponent: { name: 'cil-speedometer' },
-   
+    url: '/dashboard', // URL à corriger pour chaque section
+    class: 'nav-item-dashboard', // Classe personnalisée
   },
-  
-
   {
-    name: 'gestion des utilisateur',
+    name: 'Gestion des utilisateurs',
     url: '/gestion-utilisateurs',
     iconComponent: { name: 'cil-user' },
-   
+    class: 'nav-item-users', // Classe personnalisée
   },
- 
   {
-    name: 'parametrage',
+    name: 'Paramétrages',
     url: '/paramétrages',
-    iconComponent: { name: 'cil-settings' } , children: [
+    iconComponent: { name: 'cilSettings' },
+    class: 'nav-item-settings', // Classe personnalisée
+    children: [
       {
-        name: 'Module de reglement',
+        name: 'Modalité de Règlements',
         url: '/paramétrages/moduleReglement',
-        icon: 'nav-icon-bullet'
+        iconComponent: { name: 'cilCreditCard' },
+        class: 'nav-item-reglement', // Classe personnalisée
       },
       {
-        name: 'Categorie Abonnement',
+        name: 'Catégories Abonnements',
         url: '/paramétrages/categorieabonnement',
-        icon: 'nav-icon-bullet'
+        iconComponent: { name: 'cilTags' },
+        class: 'nav-item-categories', // Classe personnalisée
       },
       {
-        name: 'Type Abonnement',
+        name: 'Types Abonnements',
         url: '/paramétrages/typeAbonnement',
-        icon: 'nav-icon-bullet'
-      }]  
-    },////////////////////////
-
-
-
+        iconComponent: { name: 'cil-layers' },
+        class: 'nav-item-types', // Classe personnalisée
+      }
+    ]
+  },
   {
-    name: 'Abonnement',
+    name: 'Abonnements',
     url: '/Abonnement',
-   
-    iconComponent: { name: 'cil-user' }
-    , children: [
+    iconComponent: { name: 'cil-notes' },
+    class: 'nav-item-abonnements', // Classe personnalisée
+    children: [
       {
-        name: 'Adherent',
+        name: 'Adhérents',
         url: '/abonnement/adherent',
-        icon: 'nav-icon-bullet'
+        iconComponent: { name: 'cil-user' },
+        class: 'nav-item-adherents', // Classe personnalisée
       },
       {
-        name: 'Liste des Abonnement',
+        name: 'Liste des Abonnements',
         url: '/abonnement/listeAbonnement',
-        icon: 'nav-icon-bullet'
+        iconComponent: { name: 'cil-list' },
+        class: 'nav-item-liste-abonnement', // Classe personnalisée
       },
       {
         name: 'Ajouter Abonnement',
         url: '/abonnement/ajoutAbonnement',
-        icon: 'nav-icon-bullet'
+        iconComponent: { name: 'cil-pencil' },
+        class: 'nav-item-ajout-abonnement', // Classe personnalisée
+      }
+    ]
+  },
+
+  {
+
+    name: 'Salle de Formation',
+    url: '/salle-formation',
+    iconComponent: { name: 'cil-layers' }
+    , children: [
+      {
+        name: 'Liste des Salles ',
+        url: '/salle-formation/listedesSalle',
+        iconComponent: { name: 'cil-list' }
+      },
+      {
+        name: 'Formateur',
+        url: '/salle-formation/formateur',
+       iconComponent: { name:'cil-user'}
+      },
+      {
+        name: 'Réservation',
+        url: '/salle-formation/reservation',
+        iconComponent: { name:'cil-calendar'}
       }]  },
-      ////////////////////////
-      {
-
-        name: 'salle de formation',
-        url: '/salle-formation',
-        iconComponent: { name: 'cil-pencil' }
-        , children: [
-          {
-            name: 'liste des salle ',
-            url: '/salle-formation/listedesSalle',
-            icon: 'nav-icon-bullet'
-          },
-          {
-            name: 'Formateur',
-            url: '/salle-formation/formateur',
-            icon: 'nav-icon-bullet'
-          },
-          {
-            name: 'Réservation',
-            url: '/salle-formation/reservation',
-            icon: 'nav-icon-bullet'
-          }]  },
 
 
-
-      
-  
   {
-    name: 'Components',
-    title: true
-  },
-  {
-    name: 'aaaaaaaaaaaaaaaaa',
-    url: '/base',
-    iconComponent: { name: 'cil-puzzle' },
+    name: 'Caisse',
+    url: '/caisse',
+    iconComponent: { name: 'cilCreditCard' },
+    class: 'nav-item-caisse', // Classe personnalisée
     children: [
       {
-        name: 'Accordion',
-        url: '/base/accordion',
-        icon: 'nav-icon-bullet'
+        name: 'Liste des Règlements',
+        url: '/caisse/listereglements',
+        iconComponent: { name: 'cil-list' },
+        class: 'nav-item-liste-reglement', // Classe personnalisée
       },
       {
-        name: 'Breadcrumbs',
-        url: '/base/breadcrumbs',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Cards',
-        url: '/base/cards',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Carousel',
-        url: '/base/carousel',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Collapse',
-        url: '/base/collapse',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'List Group',
-        url: '/base/list-group',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Navs & Tabs',
-        url: '/base/navs',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Pagination',
-        url: '/base/pagination',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Placeholder',
-        url: '/base/placeholder',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Popovers',
-        url: '/base/popovers',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Progress',
-        url: '/base/progress',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Spinners',
-        url: '/base/spinners',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Tables',
-        url: '/base/tables',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Tabs',
-        url: '/base/tabs',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Tooltips',
-        url: '/base/tooltips',
-        icon: 'nav-icon-bullet'
+        name: 'Journal de Caisse',
+        url: '/caisse/journalcaisse',
+        iconComponent: { name: 'cil-notes' },
+        class: 'nav-item-journal-caisse', // Classe personnalisée
       }
     ]
   },
-  {
-    name: 'Buttons',
-    url: '/buttons',
-    iconComponent: { name: 'cil-cursor' },
-    children: [
-      {
-        name: 'Buttons',
-        url: '/buttons/buttons',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Button groups',
-        url: '/buttons/button-groups',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Dropdowns',
-        url: '/buttons/dropdowns',
-        icon: 'nav-icon-bullet'
-      }
-    ]
-  },
-  {
-    name: 'Forms',
-    url: '/forms',
-    iconComponent: { name: 'cil-notes' },
-    children: [
-      {
-        name: 'Form Control',
-        url: '/forms/form-control',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Select',
-        url: '/forms/select',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Checks & Radios',
-        url: '/forms/checks-radios',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Range',
-        url: '/forms/range',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Input Group',
-        url: '/forms/input-group',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Floating Labels',
-        url: '/forms/floating-labels',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Layout',
-        url: '/forms/layout',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Validation',
-        url: '/forms/validation',
-        icon: 'nav-icon-bullet'
-      }
-    ]
-  },
-  {
-    name: 'Charts',
-    iconComponent: { name: 'cil-chart-pie' },
-    url: '/charts'
-  },
-  {
-    name: 'Icons',
-    iconComponent: { name: 'cil-star' },
-    url: '/icons',
-    children: [
-      {
-        name: 'CoreUI Free',
-        url: '/icons/coreui-icons',
-        icon: 'nav-icon-bullet',
-        badge: {
-          color: 'success',
-          text: 'FREE'
-        }
-      },
-      {
-        name: 'CoreUI Flags',
-        url: '/icons/flags',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'CoreUI Brands',
-        url: '/icons/brands',
-        icon: 'nav-icon-bullet'
-      }
-    ]
-  },
-  {
-    name: 'Notifications',
-    url: '/notifications',
-    iconComponent: { name: 'cil-bell' },
-    children: [
-      {
-        name: 'Alerts',
-        url: '/notifications/alerts',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Badges',
-        url: '/notifications/badges',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Modal',
-        url: '/notifications/modal',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Toast',
-        url: '/notifications/toasts',
-        icon: 'nav-icon-bullet'
-      }
-    ]
-  },
-  {
-    name: 'Widgets',
-    url: '/widgets',
-    iconComponent: { name: 'cil-calculator' },
-    badge: {
-      color: 'info',
-      text: 'NEW'
-    }
-  },
-  {
-    title: true,
-    name: 'Extras'
-  },
-  {
-    name: 'Pages',
-    url: '/login',
-    iconComponent: { name: 'cil-star' },
-    children: [
-      {
-        name: 'Login',
-        url: '/login',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Register',
-        url: '/register',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Error 404',
-        url: '/404',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Error 500',
-        url: '/500',
-        icon: 'nav-icon-bullet'
-      }
-    ]
-  },
-  {
-    title: true,
-    name: 'Links',
-    class: 'mt-auto'
-  },
-  {
-    name: 'Docs',
-    url: 'https://coreui.io/angular/docs/',
-    iconComponent: { name: 'cil-description' },
-    attributes: { target: '_blank' }
-  }
 ];

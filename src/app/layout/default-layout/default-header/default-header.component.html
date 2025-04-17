@@ -4,7 +4,7 @@
     <button
       [cSidebarToggle]="sidebarId()"
       cHeaderToggler
-      class="btn text-blue-600 hover:text-blue-800 transition-colors duration-300 animate-pulse-button"
+      class="btn text-blue-600 hover:text-blue-800 transition-colors duration-300"
       toggle="visible"
       style="margin-inline-start: -14px;"
       aria-label="Toggle sidebar navigation"
@@ -15,25 +15,25 @@
     <!-- Navigation Links -->
     <c-header-nav class="d-none d-md-flex ml-6">
       <c-nav-item>
-        <a cNavLink routerLink="/dashboard" routerLinkActive="active" class="text-blue-700 hover:text-blue-900 font-medium transition-colors duration-300 animate-slide-in-right">Dashboard</a>
+        <a cNavLink routerLink="/dashboard" routerLinkActive="active" class="text-blue-700 hover:text-blue-900 font-medium transition-colors duration-300">Dashboard</a>
       </c-nav-item>
       <c-nav-item>
-        <a cNavLink routerLink="/users" routerLinkActive="active" class="text-blue-700 hover:text-blue-900 font-medium transition-colors duration-300 animate-slide-in-right animation-delay-100">Users</a>
+        <a cNavLink routerLink="/users" routerLinkActive="active" class="text-blue-700 hover:text-blue-900 font-medium transition-colors duration-300">Users</a>
       </c-nav-item>
       <c-nav-item>
-        <a cNavLink routerLink="/settings" routerLinkActive="active" class="text-blue-700 hover:text-blue-900 font-medium transition-colors duration-300 animate-slide-in-right animation-delay-200">Settings</a>
+        <a cNavLink routerLink="/settings" routerLinkActive="active" class="text-blue-700 hover:text-blue-900 font-medium transition-colors duration-300">Settings</a>
       </c-nav-item>
     </c-header-nav>
 
     <!-- Right-Side Icons -->
     <c-header-nav class="d-none d-md-flex ms-auto">
-      <a cNavLink class="text-blue-600 hover:text-accent-orange transition-colors duration-300 animate-bounce">
+      <a cNavLink class="text-blue-600 hover:text-accent-orange transition-colors duration-300">
         <svg cIcon class="my-1" name="cilBell" size="lg"></svg>
       </a>
-      <a cNavLink class="text-blue-600 hover:text-accent-purple transition-colors duration-300 animate-bounce">
+      <a cNavLink class="text-blue-600 hover:text-accent-purp transition-colors duration-300">
         <svg cIcon class="my-1" name="cilList" size="lg"></svg>
       </a>
-      <a cNavLink class="text-blue-600 hover:text-highlight-green transition-colors duration-300 animate-bounce">
+      <a cNavLink class="text-blue-600 hover:text-highlight-green transition-colors duration-300">
         <svg cIcon class="my-1" name="cilEnvelopeOpen" size="lg"></svg>
       </a>
     </c-header-nav>
@@ -58,17 +58,17 @@
 <!-- User Dropdown -->
 <ng-template #userDropdown>
   <c-dropdown [popperOptions]="{ placement: 'bottom-start' }" variant="nav-item">
-    <button [caret]="false" cDropdownToggle class="py-0 pe-0 animate-heartbeat" aria-label="Open user menu">
+    <button [caret]="false" cDropdownToggle class="py-0 pe-0" aria-label="Open user menu">
       <c-avatar
         shape="rounded-1"
         [size]="'md'"
-        src="./assets/images/avatars/8.jpg"
+        src="assets/images/logo.jpg"
         status="success"
         textColor="blue-600"
         alt="User avatar"
       />
     </button>
-    <ul cDropdownMenu class="pt-0 w-64 bg-white border border-blue-200 shadow-lg animate-fade-in-up">
+    <ul cDropdownMenu class="pt-0 w-64 bg-white border border-blue-200 shadow-lg">
       <li>
         <h6 cDropdownHeader class="bg-light-bg text-blue-700 fw-semibold py-2 rounded-top">Account</h6>
       </li>
@@ -151,10 +151,10 @@
 <!-- Theme Dropdown -->
 <ng-template #themeDropdown>
   <c-dropdown alignment="end" variant="nav-item">
-    <button [caret]="false" cDropdownToggle aria-label="Open theme picker" class="text-blue-600 hover:text-blue-800 transition-colors duration-300 animate-pulse-button">
+    <button [caret]="false" cDropdownToggle aria-label="Open theme picker" class="text-blue-600 hover:text-blue-800 transition-colors duration-300">
       <svg cIcon [name]="icons()" size="lg" class="w-6 h-6"></svg>
     </button>
-    <div cDropdownMenu class="bg-white border border-blue-200 shadow-lg animate-fade-in-up">
+    <div cDropdownMenu class="bg-white border border-blue-200 shadow-lg">
       @for (mode of colorModes; track mode.name) {
         <button
           (click)="colorMode.set(mode.name)"

@@ -40,6 +40,11 @@ export const routes: Routes = [
         loadChildren: () => import('./views/salle-formation/routes').then((m) => m.routes),
       },
       {
+        path: 'caisse',
+        loadChildren: () => import('./views/caisse/routes').then((m) => m.routes),
+      },
+     
+      {
         path: 'buttons',
         loadChildren: () => import('./views/buttons/routes').then((m) => m.routes),
       },
